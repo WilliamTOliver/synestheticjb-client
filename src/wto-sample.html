@@ -36,20 +36,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: black;
       }
     </style>
-    <iron-ajax id="initialAuthentication" url="http://localhost:1337/auth/doAuth" on-response="_handleAuthResponse(0)"></iron-ajax>
+    <iron-ajax id="initialAuthentication" handle-as="json" url="http://localhost:1337/auth/doAuth" on-response="_handleAuthResponse"></iron-ajax>
+    <iron-ajax id="authRedirect" handle-as="json" on-response="_handleAuthCallback"></iron-ajax>
     <div class="card">
       <iron-form>
         <form method="get" action="/form/handler">
           <h2> SynestheticJukeBox: Song Rating and Playlist Generation App </h2>
           <p> Add a song to the App! </p>
-          <paper-button class="options-add" on-click="_redirectAdd" raised>
-            <iron-icon icon="icons:add-circle-outline"></iron-icon>
-          </paper-button>
+          <a href="http://localhost:1337/auth/doauth?add">
+            <paper-button class="options-add" raised>
+              <iron-icon icon="icons:add-circle-outline"></iron-icon>
+            </paper-button>
+          </a>
           <p> Get your synesthetic playlist! </p>
+          Get your synesthetic playlist! </a>
 
-          <paper-button class="options-get" on-click="_redirectPlaylist" raised>
-            <iron-icon icon="icons:get-app"></iron-icon>
-          </paper-button>
+          <a href="http://localhost:1337/auth/doauth?add">
+            <paper-button class="options-get" raised>
+              <iron-icon icon="icons:get-app"></iron-icon>
+            </paper-button>
+          </a>
         </form>
       </iron-form>
     </div>
@@ -60,12 +66,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get is() { return 'wto-sample'; }
 
       static get properties() {
-        return {}
+        return {
+          allowSpotify: {
+            type: Object,
+            value: {
+              "Access-Control-Allow-Origin": "https://accounts.spotify.com"
+            }
+          }
+        }
       }
       _redirectPlaylist() {
         this.$.initialAuthentication.generateRequest();
       }
       _redirectAdd() {
+
+      }
+
+      _handleAuthResponse(e) {
+        if (e) { console.log(e) }
+        if (e.detail) { console.log(e.detail) }
+        if (e.detail.response) { console.log(e.detail.response) }
+        this.$.authRedirect.url = e.detail.response.url;
+        this.$.authRedirect.headers = {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+        }
+        this.$.authRedirect.generateRequest()
+      }
+      _handleAuthCallback(e) {
+        if (e) { console.log(e) }
+        if (e.detail) { console.log(e.detail) }
+        if (e.detail.response) { console.log(e.detail.response) }
 
       }
 
