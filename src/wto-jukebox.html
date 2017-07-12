@@ -32,28 +32,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block
       }
 
+      .blue {
+        background-color: blue
+      }
+
       .hideForm {
         display: none;
       }
     </style>
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
       auto></iron-ajax>
-    <paper-button on-click="_handleClick"></paper-button>
-    <iron-form>
-      <form class$="{{formStyling}}" method="get" action="/form/handler">
-        <h2> SynestheticJukeBox: Song Rating and Playlist Generation App </h2>
-        <p> Welcome {{userName}} </p>
-        <paper-search-panel search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]" loading="[[loading]]"
-          filters="[[filters]]" selected-filters="{{selectedFilters}}" on-change-request-params="loadData">
-          <div>
-            Show your [[count]] results for "[[search]]"
-          </div>
-        </paper-search-panel>
+    <iron-ajax id="spotifySearch" handle-as="json" headers="[[token]]" on-response="handleSearchResponse"></iron-ajax>
 
-      </form>
-    </iron-form>
     <div class="card">
-    </div>
+      <iron-form>
+        <form class$="{{formStyling}}" method="get" action="/form/handler">
+          <h2> SynestheticJukeBox: Song Rating and Playlist Generation App </h2>
+          <p> Welcome {{userName}} </p>
+          <paper-search-panel search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]" loading="[[loading]]"
+            on-change-request-params="_loadData">
+            <div>
+              Show your [[count]] results for "[[search]]"
+            </div>
+          </paper-search-panel>
+          <!--<paper-button class="blue" on-click="_loadData"></paper-button>-->
+
+
+        </form>
+      </iron-form>
+      <template is="dom-repeat" items="{{items}}" as="item">
+        <div class="smallCard">
+          <template is="dom-if" if="{{item.preview_url}}">
+            <a href={{item.preview_url}} target="_blank">{{item.name}}</a>
+          </template>
+          <template is="dom-if" if="{{!item.preview_url}}">
+            No Preview Available
+          </template>
+          <div>
+      </template>
+      </div>
   </template>
 
   <script>
@@ -96,6 +113,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.getUser.url = spotifyOptions.url
         this.$.getUser.generateRequest();
       }
+      _loadData() {
+        var encodedSearchTerm = encodeURIComponent(this.search);
+        this.$.spotifySearch.url = 'https://api.spotify.com/v1/search?type=track&q=' + encodedSearchTerm
+        this.$.spotifySearch.generateRequest();
+      }
+      handleSearchResponse(e) {
+        var response = e.detail.response;
+        this.set('items', response.tracks.items)
+        console.log(response.tracks.items);
+        // // this.set('formStyling', null);
+        // var response = e.detail.response;
+        // if (response.display_name) {
+        //   this.set('userName', response.display_name)
+        //   console.log(response)
+        //   this.set('formStyling', 'showForm');
+      }
       handleUserResponse(e) {
         console.log(e.detail.response);
         // this.set('formStyling', null);
@@ -104,7 +137,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.set('userName', response.display_name)
           console.log(response)
           this.set('formStyling', 'showForm');
-          
+
         }
       }
 
