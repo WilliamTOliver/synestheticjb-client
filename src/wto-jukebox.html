@@ -14,11 +14,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-search/paper-search-panel.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="wto-sample">
+<dom-module id="wto-jukebox">
   <template>
     <style include="shared-styles">
        :host {
@@ -27,55 +28,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 10px;
       }
 
-      .options-add {
-        background-color: steelblue;
-        color: white;
+      .showForm {
+        display: block
       }
 
-      .options-get {
-        background-color: lightgrey;
-        color: black;
+      .hideForm {
+        display: none;
       }
     </style>
-    <iron-ajax id="initialAuthentication" handle-as="json" url="http://localhost:1337/auth/doAuth" on-response="_handleAuthResponse"></iron-ajax>
-    <iron-ajax id="authRedirect" handle-as="json" on-response="_handleAuthCallback"></iron-ajax>
+    <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
+      auto></iron-ajax>
+    <paper-button on-click="_handleClick"></paper-button>
+    <iron-form>
+      <form class$="{{formStyling}}" method="get" action="/form/handler">
+        <h2> SynestheticJukeBox: Song Rating and Playlist Generation App </h2>
+        <p> Welcome {{userName}} </p>
+        <paper-search-panel search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]" loading="[[loading]]"
+          filters="[[filters]]" selected-filters="{{selectedFilters}}" on-change-request-params="loadData">
+          <div>
+            Show your [[count]] results for "[[search]]"
+          </div>
+        </paper-search-panel>
 
+      </form>
+    </iron-form>
     <div class="card">
-      <iron-form>
-        <form method="get" action="/form/handler">
-          <h2> SynestheticJukeBox: Song Rating and Playlist Generation App </h2>
-          <p> Add a song to the App! </p>
-          <a href="http://localhost:1337/auth/doauth?add">
-            <paper-button class="options-add" raised>
-              <iron-icon icon="icons:add-circle-outline"></iron-icon>
-            </paper-button>
-          </a>
-          <p> Get your synesthetic playlist! </p>
-          Get your synesthetic playlist! </a>
-
-          <a href="http://localhost:1337/auth/doauth?add">
-            <paper-button class="options-get" raised>
-              <iron-icon icon="icons:get-app"></iron-icon>
-            </paper-button>
-          </a>
-        </form>
-      </iron-form>
     </div>
   </template>
 
   <script>
-    class Sample extends Polymer.Element {
-      static get is() { return 'wto-sample'; }
+    class Jukebox extends Polymer.Element {
+      static get is() { return 'wto-jukebox'; }
 
       static get properties() {
         return {
           token: {
             type: Object,
-            value: function(){
-              var loc = window.location.pathname;
-             
+            value: function () {
+              var currentPath = window.location.pathname;
+              var tokenString = currentPath.slice(9);
+              var tokenObj = { 'Authorization': 'Bearer ' + tokenString };
+              return tokenObj;
             }
           },
+          userName: String,
 
           routeData: Object
         }
@@ -85,15 +81,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // When possible, use afterNextRender to defer non-critical
         // work until after first paint.
         Polymer.RenderStatus.afterNextRender(this, function () {
-          var a = window.location.pathname;
-          console.log(a)
+          this.set('formStyling', 'hideForm')
         });
       }
       _redirectPlaylist() {
         this.$.initialAuthentication.generateRequest();
       }
-      _redirectAdd() {
-
+      _handleClick() {
+        var spotifyOptions = {
+          url: 'https://api.spotify.com/v1/me',
+          headers: { 'Authorization': 'Bearer ' + this.token },
+        };
+        this.$.getUser.headers = spotifyOptions.headers
+        this.$.getUser.url = spotifyOptions.url
+        this.$.getUser.generateRequest();
+      }
+      handleUserResponse(e) {
+        console.log(e.detail.response);
+        // this.set('formStyling', null);
+        var response = e.detail.response;
+        if (response.display_name) {
+          this.set('userName', response.display_name)
+          console.log(response)
+          this.set('formStyling', 'showForm');
+          
+        }
       }
 
       _handleAuthResponse(e) {
@@ -117,6 +129,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     }
-    window.customElements.define(Sample.is, Sample);
+    window.customElements.define(Jukebox.is, Jukebox);
   </script>
 </dom-module>
