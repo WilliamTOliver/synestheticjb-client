@@ -14,10 +14,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-tags-input/paper-tags-input.html">
 <link rel="import" href="../bower_components/paper-search/paper-search-panel.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../bower_components/isw-dropdown-menu/isw-dropdown-menu.html">
+
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="wto-jukebox">
@@ -92,9 +98,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .hideForm {
         display: none;
       }
+
       .shrink {
         width: 80%;
-        float:left;
+        float: left;
+      }
+
+      .sendToTheFore {
+        width: 500px;
+        margin-left: 100px;
+        float: right;
+        z-index: 100;
       }
     </style>
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
@@ -107,13 +121,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <h1> SJB: Add to the Jukebox </h1>
           <tr>
             <td>
-              <paper-search-panel class="shrink"search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]" loading="[[loading]]">
+              <paper-search-panel class="shrink" search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]" loading="[[loading]]">
               </paper-search-panel>
             </td>
             <td>
               <paper-button class="addButton" on-click="_loadData">Submit</paper-button>
             </td>
           </tr>
+          <paper-dialog class="sendToTheFore" id="modal">
+            <br>
+            <strong>[[selectedSong.name]]</strong>
+            <p>When you listen to [[selectedSong.name]], do you experience the song in ways not typically associated with music
+              or other aural stimulation?
+            </p>
+            <p> Synesthetic Jukebox collects songs and organizes them based these synesthetic experiences. Tag this song with
+              how you experience it outside the normal realms of sound and hearing.</p>
+            <br>
+            <isw-dropdown-menu multi attr-for-selected="value" label="Dinosaurs">
+              <template is="dom-repeat" items="[[attributes]]" as='item'>
+                <paper-icon-item value$="[[item.id]]" label$="[[item.label]]">
+                  <iron-icon class="checkbox unchecked" icon="check-box-outline-blank" slot="item-icon"></iron-icon>
+                  <iron-icon class="checkbox checked" icon="check-box" slot="item-icon"></iron-icon>
+                  <paper-item-body two-line>
+                    <div>[[ item.label ]]</div>
+                    <div secondary>[[ item.description ]]</div>
+                  </paper-item-body>
+                </paper-icon-item>
+              </template>
+            </isw-dropdown-menu>
+            <div class="buttons">
+              <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
+            </div>
+          </paper-dialog>
 
 
         </form>
@@ -150,7 +189,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <vaadin-grid-column>
             <template class="header">Add to Jukebox</template>
             <template>
-              <paper-button class="addButton" on-click="_expandItem(item)">
+              <paper-button class="addButton" on-click="_expandItem">
                 <iron-icon icon="icons:add-circle"></iron-icon>
               </paper-button>
             </template>
@@ -164,7 +203,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <template>[[item.role]]</template>
         </vaadin-grid-column> -->
         </vaadin-grid>
+
       </template>
+
+
       <!-- <template is="dom-repeat" items="{{items}}" as="item">
         <div class="smallCard">
           <table class="songInfo">
@@ -237,6 +279,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
           },
           userName: String,
+          selectedSong: {
+            type: Object,
+            notify: true
+          },
+          attributes: {
+            type: Array,
+            notify: true,
+            value: [
+              {
+                id: 1,
+                label: 'this is a label',
+                description: 'this is a description'
+              },
+              {
+                id: 2,
+                label: 'this is a label',
+                description: 'this is a description'
+              },
+              {
+                id: 3,
+                label: 'this is a label',
+                description: 'this is a description'
+              },
+              {
+                id: 4,
+                label: 'this is a label',
+                description: 'this is a description'
+              },
+            ]
+          },
 
           routeData: Object
         }
@@ -265,6 +337,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var image = a[0];
         var href = image.url;
         return href;
+      }
+      _expandItem(e) {
+        this.set('selectedSong', e.model.item)
+        this.$.modal.open()
+
       }
       _handleClick() {
         var spotifyOptions = {
