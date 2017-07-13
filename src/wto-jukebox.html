@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/paper-search/paper-search-panel.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
@@ -32,12 +33,68 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block
       }
 
-      .blue {
-        background-color: blue
+      .wrap {
+        overflow-wrap: normal;
+        overflow: scroll;
+      }
+
+      .addButton {
+        width: 50px;
+        height: 45px;
+        background-color: steelblue;
+        color: black;
+        border-radius: 10px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .spotifyButton {
+        width: 50px;
+        height: 45px;
+        background-color: springgreen;
+        color: black;
+        border-radius: 10px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      paper-button.addButton:hover {
+        background-color: var(--paper-indigo-200);
+      }
+
+      paper-button.spotifyButton:hover {
+        background-color: var(--paper-indigo-200);
+      }
+
+      .songInfo tr {
+        line-height: 5px;
+      }
+
+
+      .spotifyLogo {
+        width: 30px;
+        height: 30px;
+      }
+
+      .cardElement {
+        width: 12.5%;
+      }
+
+      .albumArt {
+        width: 140px;
+        height: 140px;
+      }
+
+      .albumArt {
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
       }
 
       .hideForm {
         display: none;
+      }
+      .shrink {
+        width: 80%;
+        float:left;
       }
     </style>
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
@@ -47,30 +104,121 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       <iron-form>
         <form class$="{{formStyling}}" method="get" action="/form/handler">
-          <h2> SynestheticJukeBox: Song Rating and Playlist Generation App </h2>
-          <p> Welcome {{userName}} </p>
-          <paper-search-panel search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]" loading="[[loading]]"
-            on-change-request-params="_loadData">
-            <div>
-              Show your [[count]] results for "[[search]]"
-            </div>
-          </paper-search-panel>
-          <!--<paper-button class="blue" on-click="_loadData"></paper-button>-->
+          <h1> SJB: Add to the Jukebox </h1>
+          <tr>
+            <td>
+              <paper-search-panel class="shrink"search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]" loading="[[loading]]">
+              </paper-search-panel>
+            </td>
+            <td>
+              <paper-button class="addButton" on-click="_loadData">Submit</paper-button>
+            </td>
+          </tr>
 
 
         </form>
       </iron-form>
-      <template is="dom-repeat" items="{{items}}" as="item">
-        <div class="smallCard">
-          <template is="dom-if" if="{{item.preview_url}}">
-            <a href={{item.preview_url}} target="_blank">{{item.name}}</a>
-          </template>
-          <template is="dom-if" if="{{!item.preview_url}}">
-            No Preview Available
-          </template>
-          <div>
+      <template is="dom-if" if="{{items}}">
+        <vaadin-grid items='{{items}}'>
+          <vaadin-grid-column>
+            <template>
+              <img class="albumArt" src={{_getImage(item.album.images)}}>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Track</template>
+            <template><strong class="wrap">[[item.name]]</strong></template>
+          </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Artist</template>
+            <template>[[_getArtistName(item.artists)]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Album</template>
+            <template>[[item.album.name]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Open In Spotify</template>
+            <template>
+              <a href={{item.external_urls.spotify}} target="_blank">
+                <paper-button class="spotifyButton">
+                  <img class="spotifyLogo" src="../images/spotify.png">
+                </paper-button>
+              </a>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Add to Jukebox</template>
+            <template>
+              <paper-button class="addButton" on-click="_expandItem(item)">
+                <iron-icon icon="icons:add-circle"></iron-icon>
+              </paper-button>
+            </template>
+          </vaadin-grid-column>
+          <!-- <vaadin-grid-column>
+          <template class="header">Surname</template>
+          <template>[[item.surname]]</template>
+        </vaadin-grid-column>
+        <vaadin-grid-column>
+          <template class="header">Role</template>
+          <template>[[item.role]]</template>
+        </vaadin-grid-column> -->
+        </vaadin-grid>
       </template>
-      </div>
+      <!-- <template is="dom-repeat" items="{{items}}" as="item">
+        <div class="smallCard">
+          <table class="songInfo">
+            <tr>
+              <td class="albumArtFrame">
+                <template is="dom-if" if="{{item.album.images}}">
+                  <img class="albumArt" src={{_getImage(item.album.images)}}>
+                </template>
+                <template is="dom-if" if="{{!item.album.images}}">
+                  No Album Art Available
+                </template>
+              </td>
+              <td>
+                <table>
+                  <tr>
+                    <td>
+                      <h3>Track: </h3>
+                    </td>
+                    <td>
+                      <span>{{item.name}}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h3>Artist: </h3>
+                    </td>
+                    <td><span>{{_getArtistName(item.artists)}}</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h3>Album: </h3>
+                    </td>
+                    <td><span>{{item.album.name}}</span></td>
+                  </tr>
+                </table>
+              </td>
+              <td></td>
+              <td></td>
+              <td align="right">
+                <a href={{item.external_urls.spotify}} target="_blank">
+                  <paper-button class="spotifyButton">
+                    <img class="spotifyLogo" src="../images/spotify.png">
+                  </paper-button>
+                </a>
+              </td>
+              <td align="right">
+                <paper-button class="addButton" on-click="_expandItem(item)">
+                  <iron-icon icon="icons:add-circle"></iron-icon>
+                </paper-button>
+              </td>
+            </tr>
+          </table>
+      </template> -->
+    </div>
   </template>
 
   <script>
@@ -104,6 +252,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _redirectPlaylist() {
         this.$.initialAuthentication.generateRequest();
       }
+      _getArtistName(a) {
+        var artist = a[0];
+        var name = artist.name;
+        if (name) {
+          return name
+        } else {
+          return 'no artist name available'
+        }
+      }
+      _getImage(a) {
+        var image = a[0];
+        var href = image.url;
+        return href;
+      }
       _handleClick() {
         var spotifyOptions = {
           url: 'https://api.spotify.com/v1/me',
@@ -120,14 +282,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       handleSearchResponse(e) {
         var response = e.detail.response;
+        console.log(response)
         this.set('items', response.tracks.items)
-        console.log(response.tracks.items);
-        // // this.set('formStyling', null);
-        // var response = e.detail.response;
-        // if (response.display_name) {
-        //   this.set('userName', response.display_name)
-        //   console.log(response)
-        //   this.set('formStyling', 'showForm');
       }
       handleUserResponse(e) {
         console.log(e.detail.response);
