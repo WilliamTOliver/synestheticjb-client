@@ -114,6 +114,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
       auto></iron-ajax>
     <iron-ajax id="spotifySearch" handle-as="json" headers="[[token]]" on-response="handleSearchResponse"></iron-ajax>
+    <iron-ajax id="createAttribute" url="http://localhost:1337/jukeBox/createAttribute"handle-as="json" content-type="application/json" on-response="handleCreateAttributeResponse"></iron-ajax>
 
     <div class="card">
       <iron-form>
@@ -126,6 +127,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </td>
             <td>
               <paper-button class="addButton" on-click="_loadData">Submit</paper-button>
+              <paper-button class="addButton" on-click="_createAttribute">Add Attribute</paper-button>
             </td>
           </tr>
           <paper-dialog class="sendToTheFore" id="modal">
@@ -356,6 +358,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var encodedSearchTerm = encodeURIComponent(this.search);
         this.$.spotifySearch.url = 'https://api.spotify.com/v1/search?type=track&q=' + encodedSearchTerm
         this.$.spotifySearch.generateRequest();
+      }
+      _createAttribute() {
+        var attribute = {
+          name: 'flicky',
+          description: 'this is a tight description',
+          category: 'touch',
+          songs: [
+            1, 2, 3
+          ]
+        }
+        this.$.createAttribute.body = attribute;
+        this.$.createAttribute.method = 'POST';
+        this.$.createAttribute.generateRequest();
+      }
+      handleCreateAttributeResponse(e){
+        console.log(e.detail.response)
       }
       handleSearchResponse(e) {
         var response = e.detail.response;
