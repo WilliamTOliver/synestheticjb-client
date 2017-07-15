@@ -8,23 +8,23 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../bower_components/paper-tags-input/paper-tags-input.html">
-<link rel="import" href="../bower_components/paper-search/paper-search-panel.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
-<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
-<link rel="import" href="../bower_components/isw-dropdown-menu/isw-dropdown-menu.html">
+<link rel="import" href="./../bower_components/iron-form/iron-form.html">
+<link rel="import" href="./../bower_components/app-route/app-route.html">
+<link rel="import" href="./../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="./../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="./../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="./../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="./../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="./../bower_components/paper-search/paper-search-panel.html">
+<link rel="import" href="./../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="./../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="./../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="./../bower_components/isw-dropdown-menu/isw-dropdown-menu.html">
 
-<link rel="import" href="shared-styles.html">
+<link rel="import" href="./shared-styles.html">
 
 <dom-module id="wto-jukebox">
   <template>
@@ -114,51 +114,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
       auto></iron-ajax>
     <iron-ajax id="spotifySearch" handle-as="json" headers="[[token]]" on-response="handleSearchResponse"></iron-ajax>
-    <iron-ajax id="createAttribute" url="http://localhost:1337/jukeBox/createAttribute"handle-as="json" content-type="application/json" on-response="handleCreateAttributeResponse"></iron-ajax>
-
+    <iron-ajax id="createAttribute" url="http://localhost:1337/jukeBox/createAttribute" handle-as="json" content-type="application/json"
+      on-response="handleCreateAttributeResponse"></iron-ajax>
+    <iron-ajax id="getAttributes" url="http://localhost:1337/jukeBox/getAttributes" handle-as="json" content-type="application/json"
+      on-response="handleGetAttributes" auto></iron-ajax>
+    <iron-ajax id="getGenres" url="http://localhost:1337/jukeBox/getGenres" handle-as="json" content-type="application/json"
+      on-response="handleGetGenres" auto></iron-ajax>
+    <iron-ajax id="createSong" url="http://localhost:1337/jukeBox/createSong" handle-as="json" content-type="application/json"
+      on-response="handleCreateSongResponse"></iron-ajax>
+    <paper-dialog on-dialog-confirm="_createSong" class="sendToTheFore" id="modal">
+      <br>
+      <strong>[[selectedSong.name]]</strong>
+      <br>
+      <br>
+      <br>
+      <p>When you listen to [[selectedSong.name]], what dance genre do you see it fitting into best?
+      </p>
+      <p> Beyond that, what are some tags that would help other djs/dance organizers to understand what you hear when you hear
+        [[selectedSong.name]]?</p>
+      <table>
+        <tr>
+          <td>
+            <isw-dropdown-menu id="genreSelect" multi attr-for-selected="value" label="Genre">
+              <template is="dom-repeat" items="[[genres]]" as='genre'>
+                <paper-item value="[[genre.id]]">
+                  [[genre.name]]
+                </paper-item>
+              </template>
+            </isw-dropdown-menu>
+          </td>
+          <td>
+            <isw-dropdown-menu id="attrSelect" multi attr-for-selected="value" label="Tags (select all that apply)">
+              <template is="dom-repeat" items="[[attributes]]" as='attr'>
+                <paper-item value="[[attr.id]]">
+                  [[attr.name]]
+                </paper-item>
+              </template>
+            </isw-dropdown-menu>
+          </td>
+        </tr>
+      </table>
+      <div class="buttons">
+        <paper-button dialog-dismiss autofocus>Cancel</paper-button>
+        <paper-button on-tap="_createSong" dialog-confirm autofocus>Submit</paper-button>
+      </div>
+    </paper-dialog>
     <div class="card">
       <iron-form>
         <form class$="{{formStyling}}" method="get" action="/form/handler">
           <h1> SJB: Add to the Jukebox </h1>
-          <tr>
-            <td>
-              <paper-search-panel class="shrink" search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]" loading="[[loading]]">
-              </paper-search-panel>
-            </td>
-            <td>
-              <paper-button class="addButton" on-click="_loadData">Submit</paper-button>
-              <paper-button class="addButton" on-click="_createAttribute">Add Attribute</paper-button>
-            </td>
-          </tr>
-          <paper-dialog class="sendToTheFore" id="modal">
-            <br>
-            <strong>[[selectedSong.name]]</strong>
-            <p>When you listen to [[selectedSong.name]], do you experience the song in ways not typically associated with music
-              or other aural stimulation?
-            </p>
-            <p> Synesthetic Jukebox collects songs and organizes them based these synesthetic experiences. Tag this song with
-              how you experience it outside the normal realms of sound and hearing.</p>
-            <br>
-            <isw-dropdown-menu multi attr-for-selected="value" label="Dinosaurs">
-              <template is="dom-repeat" items="[[attributes]]" as='item'>
-                <paper-icon-item value$="[[item.id]]" label$="[[item.label]]">
-                  <iron-icon class="checkbox unchecked" icon="check-box-outline-blank" slot="item-icon"></iron-icon>
-                  <iron-icon class="checkbox checked" icon="check-box" slot="item-icon"></iron-icon>
-                  <paper-item-body two-line>
-                    <div>[[ item.label ]]</div>
-                    <div secondary>[[ item.description ]]</div>
-                  </paper-item-body>
-                </paper-icon-item>
-              </template>
-            </isw-dropdown-menu>
-            <div class="buttons">
-              <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
-            </div>
-          </paper-dialog>
-
-
+          <paper-search-panel on-paper-search-search="_loadData" search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]"
+            loading="[[loading]]">
+          </paper-search-panel>
         </form>
       </iron-form>
+      <br>
       <template is="dom-if" if="{{items}}">
         <vaadin-grid items='{{items}}'>
           <vaadin-grid-column>
@@ -196,72 +206,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </paper-button>
             </template>
           </vaadin-grid-column>
-          <!-- <vaadin-grid-column>
-          <template class="header">Surname</template>
-          <template>[[item.surname]]</template>
-        </vaadin-grid-column>
-        <vaadin-grid-column>
-          <template class="header">Role</template>
-          <template>[[item.role]]</template>
-        </vaadin-grid-column> -->
         </vaadin-grid>
-
       </template>
-
-
-      <!-- <template is="dom-repeat" items="{{items}}" as="item">
-        <div class="smallCard">
-          <table class="songInfo">
-            <tr>
-              <td class="albumArtFrame">
-                <template is="dom-if" if="{{item.album.images}}">
-                  <img class="albumArt" src={{_getImage(item.album.images)}}>
-                </template>
-                <template is="dom-if" if="{{!item.album.images}}">
-                  No Album Art Available
-                </template>
-              </td>
-              <td>
-                <table>
-                  <tr>
-                    <td>
-                      <h3>Track: </h3>
-                    </td>
-                    <td>
-                      <span>{{item.name}}</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h3>Artist: </h3>
-                    </td>
-                    <td><span>{{_getArtistName(item.artists)}}</span></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h3>Album: </h3>
-                    </td>
-                    <td><span>{{item.album.name}}</span></td>
-                  </tr>
-                </table>
-              </td>
-              <td></td>
-              <td></td>
-              <td align="right">
-                <a href={{item.external_urls.spotify}} target="_blank">
-                  <paper-button class="spotifyButton">
-                    <img class="spotifyLogo" src="../images/spotify.png">
-                  </paper-button>
-                </a>
-              </td>
-              <td align="right">
-                <paper-button class="addButton" on-click="_expandItem(item)">
-                  <iron-icon icon="icons:add-circle"></iron-icon>
-                </paper-button>
-              </td>
-            </tr>
-          </table>
-      </template> -->
     </div>
   </template>
 
@@ -288,28 +234,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           attributes: {
             type: Array,
             notify: true,
-            value: [
-              {
-                id: 1,
-                label: 'this is a label',
-                description: 'this is a description'
-              },
-              {
-                id: 2,
-                label: 'this is a label',
-                description: 'this is a description'
-              },
-              {
-                id: 3,
-                label: 'this is a label',
-                description: 'this is a description'
-              },
-              {
-                id: 4,
-                label: 'this is a label',
-                description: 'this is a description'
-              },
-            ]
           },
 
           routeData: Object
@@ -325,6 +249,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       _redirectPlaylist() {
         this.$.initialAuthentication.generateRequest();
+      }
+      logChanges(e) {
+
       }
       _getArtistName(a) {
         var artist = a[0];
@@ -345,15 +272,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.modal.open()
 
       }
-      _handleClick() {
-        var spotifyOptions = {
-          url: 'https://api.spotify.com/v1/me',
-          headers: { 'Authorization': 'Bearer ' + this.token },
-        };
-        this.$.getUser.headers = spotifyOptions.headers
-        this.$.getUser.url = spotifyOptions.url
-        this.$.getUser.generateRequest();
-      }
       _loadData() {
         var encodedSearchTerm = encodeURIComponent(this.search);
         this.$.spotifySearch.url = 'https://api.spotify.com/v1/search?type=track&q=' + encodedSearchTerm
@@ -372,46 +290,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.createAttribute.method = 'POST';
         this.$.createAttribute.generateRequest();
       }
-      handleCreateAttributeResponse(e){
+      _createSong(e) {
+        let songObj = {}
+        let attributes = this.$.attrSelect.selectedItems
+        songObj.attributes = attributes.map(attr => attr.value);
+        songObj.genre = this.$.genreSelect.selectedItem.value
+        songObj.spotify_id = this.selectedSong.id;
+        this.$.createSong.body = songObj;
+        this.$.createSong.method = 'POST';
+        this.$.createSong.generateRequest();
+      }
+      handleGetAttributes(e) {
+        this.set('attributes', e.detail.response);
+      }
+      handleGetGenres(e) {
+        this.set('genres', e.detail.response);
+      }
+      handleCreateAttributeResponse(e) {
+        console.log(e.detail.response)
+      }
+      handleCreateSongResponse(e) {
         console.log(e.detail.response)
       }
       handleSearchResponse(e) {
         var response = e.detail.response;
-        console.log(response)
         this.set('items', response.tracks.items)
       }
       handleUserResponse(e) {
-        console.log(e.detail.response);
-        // this.set('formStyling', null);
         var response = e.detail.response;
         if (response.display_name) {
           this.set('userName', response.display_name)
-          console.log(response)
           this.set('formStyling', 'showForm');
-
         }
       }
-
-      _handleAuthResponse(e) {
-        if (e) { console.log(e) }
-        if (e.detail) { console.log(e.detail) }
-        if (e.detail.response) { console.log(e.detail.response) }
-        this.$.authRedirect.url = e.detail.response.url;
-        this.$.authRedirect.headers = {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
-        }
-        this.$.authRedirect.generateRequest()
-      }
-      _handleAuthCallback(e) {
-        if (e) { console.log(e) }
-        if (e.detail) { console.log(e.detail) }
-        if (e.detail.response) { console.log(e.detail.response) }
-
-      }
-
-
-
     }
     window.customElements.define(Jukebox.is, Jukebox);
   </script>
