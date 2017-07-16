@@ -13,8 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="./../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="./../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="./../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="./../bower_components/vaadin-grid/vaadin-grid.html">
-<link rel="import" href="./../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="./../bower_components/paper-input/paper-input.html">
 <link rel="import" href="./../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="./../bower_components/paper-search/paper-search-panel.html">
 <link rel="import" href="./../bower_components/paper-button/paper-button.html">
@@ -23,307 +22,159 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="./../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="./../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="./../bower_components/isw-dropdown-menu/isw-dropdown-menu.html">
-
 <link rel="import" href="./shared-styles.html">
 
+
 <dom-module id="wto-jukebox">
-  <template>
-    <style include="shared-styles">
-       :host {
-        display: block;
+    <template>
+        <style include="shared-styles">
+             :host {
+                display: block;
 
-        padding: 10px;
-      }
-
-      .showForm {
-        display: block
-      }
-
-      .wrap {
-        overflow-wrap: normal;
-        overflow: scroll;
-      }
-
-      .addButton {
-        width: 50px;
-        height: 45px;
-        background-color: steelblue;
-        color: black;
-        border-radius: 10px;
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-      }
-
-      .spotifyButton {
-        width: 50px;
-        height: 45px;
-        background-color: springgreen;
-        color: black;
-        border-radius: 10px;
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-      }
-
-      paper-button.addButton:hover {
-        background-color: var(--paper-indigo-200);
-      }
-
-      paper-button.spotifyButton:hover {
-        background-color: var(--paper-indigo-200);
-      }
-
-      .songInfo tr {
-        line-height: 5px;
-      }
-
-
-      .spotifyLogo {
-        width: 30px;
-        height: 30px;
-      }
-
-      .cardElement {
-        width: 12.5%;
-      }
-
-      .albumArt {
-        width: 140px;
-        height: 140px;
-      }
-
-      .albumArt {
-        border-radius: 10px;
-        background-color: #fff;
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-      }
-
-      .hideForm {
-        display: none;
-      }
-
-      .shrink {
-        width: 80%;
-        float: left;
-      }
-
-      .sendToTheFore {
-        width: 500px;
-        margin-left: 100px;
-        float: right;
-        z-index: 100;
-      }
-    </style>
-    <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
-      auto></iron-ajax>
-    <iron-ajax id="spotifySearch" handle-as="json" headers="[[token]]" on-response="handleSearchResponse"></iron-ajax>
-    <iron-ajax id="createAttribute" url="http://localhost:1337/jukeBox/createAttribute" handle-as="json" content-type="application/json"
-      on-response="handleCreateAttributeResponse"></iron-ajax>
-    <iron-ajax id="getAttributes" url="http://localhost:1337/jukeBox/getAttributes" handle-as="json" content-type="application/json"
-      on-response="handleGetAttributes" auto></iron-ajax>
-    <iron-ajax id="getGenres" url="http://localhost:1337/jukeBox/getGenres" handle-as="json" content-type="application/json"
-      on-response="handleGetGenres" auto></iron-ajax>
-    <iron-ajax id="createSong" url="http://localhost:1337/jukeBox/createSong" handle-as="json" content-type="application/json"
-      on-response="handleCreateSongResponse"></iron-ajax>
-    <paper-dialog on-dialog-confirm="_createSong" class="sendToTheFore" id="modal">
-      <br>
-      <strong>[[selectedSong.name]]</strong>
-      <br>
-      <br>
-      <br>
-      <p>When you listen to [[selectedSong.name]], what dance genre do you see it fitting into best?
-      </p>
-      <p> Beyond that, what are some tags that would help other djs/dance organizers to understand what you hear when you hear
-        [[selectedSong.name]]?</p>
-      <table>
-        <tr>
-          <td>
-            <isw-dropdown-menu id="genreSelect" multi attr-for-selected="value" label="Genre">
-              <template is="dom-repeat" items="[[genres]]" as='genre'>
-                <paper-item value="[[genre.id]]">
-                  [[genre.name]]
-                </paper-item>
-              </template>
-            </isw-dropdown-menu>
-          </td>
-          <td>
-            <isw-dropdown-menu id="attrSelect" multi attr-for-selected="value" label="Tags (select all that apply)">
-              <template is="dom-repeat" items="[[attributes]]" as='attr'>
-                <paper-item value="[[attr.id]]">
-                  [[attr.name]]
-                </paper-item>
-              </template>
-            </isw-dropdown-menu>
-          </td>
-        </tr>
-      </table>
-      <div class="buttons">
-        <paper-button dialog-dismiss autofocus>Cancel</paper-button>
-        <paper-button on-tap="_createSong" dialog-confirm autofocus>Submit</paper-button>
-      </div>
-    </paper-dialog>
-    <div class="card">
-      <iron-form>
-        <form class$="{{formStyling}}" method="get" action="/form/handler">
-          <h1> SJB: Add to the Jukebox </h1>
-          <paper-search-panel on-paper-search-search="_loadData" search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]"
-            loading="[[loading]]">
-          </paper-search-panel>
-        </form>
-      </iron-form>
-      <br>
-      <template is="dom-if" if="{{items}}">
-        <vaadin-grid items='{{items}}'>
-          <vaadin-grid-column>
-            <template>
-              <img class="albumArt" src={{_getImage(item.album.images)}}>
-            </template>
-          </vaadin-grid-column>
-          <vaadin-grid-column>
-            <template class="header">Track</template>
-            <template><strong class="wrap">[[item.name]]</strong></template>
-          </vaadin-grid-column>
-          <vaadin-grid-column>
-            <template class="header">Artist</template>
-            <template>[[_getArtistName(item.artists)]]</template>
-          </vaadin-grid-column>
-          <vaadin-grid-column>
-            <template class="header">Album</template>
-            <template>[[item.album.name]]</template>
-          </vaadin-grid-column>
-          <vaadin-grid-column>
-            <template class="header">Open In Spotify</template>
-            <template>
-              <a href={{item.external_urls.spotify}} target="_blank">
-                <paper-button class="spotifyButton">
-                  <img class="spotifyLogo" src="../images/spotify.png">
-                </paper-button>
-              </a>
-            </template>
-          </vaadin-grid-column>
-          <vaadin-grid-column>
-            <template class="header">Add to Jukebox</template>
-            <template>
-              <paper-button class="addButton" on-click="_expandItem">
-                <iron-icon icon="icons:add-circle"></iron-icon>
-              </paper-button>
-            </template>
-          </vaadin-grid-column>
-        </vaadin-grid>
-      </template>
-    </div>
-  </template>
-
-  <script>
-    class Jukebox extends Polymer.Element {
-      static get is() { return 'wto-jukebox'; }
-
-      static get properties() {
-        return {
-          token: {
-            type: Object,
-            value: function () {
-              var currentPath = window.location.pathname;
-              var tokenString = currentPath.slice(9);
-              var tokenObj = { 'Authorization': 'Bearer ' + tokenString };
-              return tokenObj;
+                padding: 10px;
             }
-          },
-          userName: String,
-          selectedSong: {
-            type: Object,
-            notify: true
-          },
-          attributes: {
-            type: Array,
-            notify: true,
-          },
 
-          routeData: Object
-        }
-      }
-      ready() {
-        super.ready();
-        // When possible, use afterNextRender to defer non-critical
-        // work until after first paint.
-        Polymer.RenderStatus.afterNextRender(this, function () {
-          this.set('formStyling', 'hideForm')
-        });
-      }
-      _redirectPlaylist() {
-        this.$.initialAuthentication.generateRequest();
-      }
-      logChanges(e) {
+            iron-icon.checkbox.checked {
+                color: #00508C;
+            }
 
-      }
-      _getArtistName(a) {
-        var artist = a[0];
-        var name = artist.name;
-        if (name) {
-          return name
-        } else {
-          return 'no artist name available'
-        }
-      }
-      _getImage(a) {
-        var image = a[0];
-        var href = image.url;
-        return href;
-      }
-      _expandItem(e) {
-        this.set('selectedSong', e.model.item)
-        this.$.modal.open()
+            iron-icon.checkbox.unchecked {
+                color: var(--secondary-text-color);
+            }
 
-      }
-      _loadData() {
-        var encodedSearchTerm = encodeURIComponent(this.search);
-        this.$.spotifySearch.url = 'https://api.spotify.com/v1/search?type=track&q=' + encodedSearchTerm
-        this.$.spotifySearch.generateRequest();
-      }
-      _createAttribute() {
-        var attribute = {
-          name: 'flicky',
-          description: 'this is a tight description',
-          category: 'touch',
-          songs: [
-            1, 2, 3
-          ]
+            paper-icon-item iron-icon.checkbox.checked {
+                display: none;
+            }
+
+            paper-icon-item iron-icon.checkbox.unchecked {
+                display: block;
+            }
+
+            paper-icon-item.iron-selected iron-icon.checkbox.checked {
+                display: block;
+            }
+
+            paper-icon-item.iron-selected iron-icon.checkbox.unchecked {
+                display: none;
+            }
+
+            .restrict {
+                padding: 15px;
+                width: 700px;
+                overflow: scroll;
+            }
+
+            .create {
+                left: 82%;
+            }
+        </style>
+        <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
+            auto></iron-ajax>
+        <iron-ajax id="getAttributes" url="http://localhost:1337/jukeBox/getAttributes" handle-as="json" content-type="application/json"
+            on-response="handleGetAttributes" auto></iron-ajax>
+        <iron-ajax id="getGenres" url="http://localhost:1337/jukeBox/getGenres" handle-as="json" content-type="application/json"
+            on-response="handleGetGenres" auto></iron-ajax>
+        <iron-ajax id="createPlaylist" method="POST" headers="[[token]]" handle-as="json" content-type="application/json"
+            on-response="handlePlaylistResponse"></iron-ajax>
+        <div class="card">
+            <h2>Generate A Playlist</h2>
+            <br>
+            <strong> Pick a Genre </strong>
+            <isw-dropdown-menu id="genreSelect" multi attr-for-selected="value" label="Genre">
+                <template is="dom-repeat" items="[[genres]]" as='genre'>
+                    <paper-icon-item class="restrict" value="[[ genre.id ]]" label$="[[ genre.name ]]">
+                        <iron-icon class="checkbox unchecked" icon="check-box-outline-blank" slot="item-icon"></iron-icon>
+                        <iron-icon class="checkbox checked" icon="check-box" slot="item-icon"></iron-icon>
+                        <paper-item-body two-line>
+                            <div>[[ genre.name ]]</div>
+                            <div secondary>[[ genre.description ]]</div>
+                        </paper-item-body>
+                    </paper-icon-item>
+                </template>
+            </isw-dropdown-menu>
+            <strong> Pick Some Tags </strong>
+            <isw-dropdown-menu id="attrSelect" multi attr-for-selected="value" label="Tags (select all that apply)">
+                <template is="dom-repeat" items="[[attributes]]" as='attr'>
+                    <paper-icon-item class="restrict" value="[[ attr.id ]]" label$="[[ attr.name ]]">
+                        <iron-icon class="checkbox unchecked" icon="check-box-outline-blank" slot="item-icon"></iron-icon>
+                        <iron-icon class="checkbox checked" icon="check-box" slot="item-icon"></iron-icon>
+                        <paper-item-body two-line>
+                            <div>[[ attr.name ]]</div>
+                            <div secondary>[[ attr.description ]]</div>
+                        </paper-item-body>
+                    </paper-icon-item>
+                </template>
+            </isw-dropdown-menu>
+            <br>
+            <strong> Playlist Name </strong>
+            <paper-input id="playlistName" label="Name"></paper-input>
+            <br>
+            <br>
+            <br>
+            <paper-button class="create" raised on-tap="createPlaylist"> Create Playlist </paper-button>
+        </div>
+
+    </template>
+
+    <script>
+        class Jukebox extends Polymer.Element {
+            static get is() { return 'wto-jukebox'; }
+            static get properties() {
+                return {
+                    token: {
+                        type: Object,
+                        value: function () {
+                            var currentPath = window.location.pathname;
+                            var tokenString = currentPath.slice(9);
+                            this.set('tokenRaw', tokenString);
+                            var tokenObj = { 'Authorization': 'Bearer ' + tokenString };
+                            return tokenObj;
+                        }
+                    },
+                    rootPath: String,
+                };
+            }
+            handleUserResponse(e) {
+                var response = e.detail.response;
+                this.set('userID', response.id)
+            }
+            handleGetAttributes(e) {
+                this.set('attributes', e.detail.response);
+            }
+            handleGetGenres(e) {
+                this.set('genres', e.detail.response);
+            }
+            handlePlaylistResponse(e) {
+                console.log(e.detail.response)
+            }
+            initializePlaylist(name) {
+                let body = {
+                    'name': name
+                }
+                this.$.createPlaylist.body = body;
+                this.$.createPlaylist.url = 'https://api.spotify.com/v1/users/' + this.userID + '/playlists';
+                this.$.createPlaylist.method = 'POST';
+                this.$.createPlaylist.generateRequest();
+            }
+            createPlaylist(e) {
+
+                let search = {}
+                let attributes = this.$.attrSelect.selectedItems
+                let genres = this.$.genreSelect.selectedItems
+                search.attributes = attributes.map(attr => attr.value);
+                search.genre = genres.map(genre => genre.value)
+                search.playlist_name = this.$.playlistName.value;
+                search.userID = this.userID;
+                search.currentToken = this.token;
+                this.initializePlaylist(search.playlist_name)
+
+                // this.$.createPlaylist.body = search;
+                // this.$.createPlaylist.generateRequest()
+
+                console.log(search);
+            }
         }
-        this.$.createAttribute.body = attribute;
-        this.$.createAttribute.method = 'POST';
-        this.$.createAttribute.generateRequest();
-      }
-      _createSong(e) {
-        let songObj = {}
-        let attributes = this.$.attrSelect.selectedItems
-        songObj.attributes = attributes.map(attr => attr.value);
-        songObj.genre = this.$.genreSelect.selectedItem.value
-        songObj.spotify_id = this.selectedSong.id;
-        this.$.createSong.body = songObj;
-        this.$.createSong.method = 'POST';
-        this.$.createSong.generateRequest();
-      }
-      handleGetAttributes(e) {
-        this.set('attributes', e.detail.response);
-      }
-      handleGetGenres(e) {
-        this.set('genres', e.detail.response);
-      }
-      handleCreateAttributeResponse(e) {
-        console.log(e.detail.response)
-      }
-      handleCreateSongResponse(e) {
-        console.log(e.detail.response)
-      }
-      handleSearchResponse(e) {
-        var response = e.detail.response;
-        this.set('items', response.tracks.items)
-      }
-      handleUserResponse(e) {
-        var response = e.detail.response;
-        if (response.display_name) {
-          this.set('userName', response.display_name)
-          this.set('formStyling', 'showForm');
-        }
-      }
-    }
-    window.customElements.define(Jukebox.is, Jukebox);
-  </script>
+
+        window.customElements.define(Jukebox.is, Jukebox);
+    </script>
 </dom-module>

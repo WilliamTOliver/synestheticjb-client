@@ -28,7 +28,7 @@
     "paper-styles": "^2.0.0"
   },
   "resolutions": {
-    "polymer": "^2.0.0-rc.3",
+    "polymer": "^2.0.0",
     "iron-flex-layout": "^2.0.0",
     "iron-meta": "1 - 2",
     "paper-behaviors": "1 - 2",
@@ -37,7 +37,7 @@
     "iron-checked-element-behavior": "1 - 2",
     "iron-validatable-behavior": "1 - 2",
     "iron-form-element-behavior": "1 - 2",
-    "paper-ripple": "^2.0.0",
+    "paper-ripple": "1 - 2",
     "paper-styles": "^2.0.0",
     "iron-iconset-svg": "1 - 2",
     "iron-icon": "^2.0.0",
@@ -50,7 +50,8 @@
     "webcomponentsjs": "^1.0.0-rc.7",
     "iron-input": "^2.0.0",
     "iron-a11y-announcer": "^v2.0.0",
-    "paper-input": "^2.0.0"
+    "paper-input": "^2.0.0",
+    "font-roboto": "^1.0.1"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0-prerelease.7"

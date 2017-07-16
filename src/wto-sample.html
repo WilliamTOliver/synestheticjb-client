@@ -27,9 +27,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 10px;
       }
 
+      .adminButton {
+        width: 50px;
+        height: 45px;
+        background-color: steelblue;
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .spotifyButton {
+        width: 50px;
+        height: 45px;
+        background-color: springgreen;
+        color: black;
+        border-radius: 10px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .spotifyLogo {
+        width: 30px;
+        height: 30px;
+      }
+
       .options-add {
         background-color: steelblue;
-        color: white; 
+        color: white;
+      }
+
+      .dialLoc {
+        position: relative;
       }
 
       .options-get {
@@ -41,21 +68,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax id="authRedirect" handle-as="json" on-response="_handleAuthCallback"></iron-ajax>
 
     <div class="card">
+
       <iron-form>
         <form method="get" action="/form/handler">
-          <h2> SynestheticJukeBox: Song Rating and Playlist Generation App </h2>
-          <p> Add a song to the App! </p>
-          <a href="http://localhost:1337/auth/doauth?add">
-            <paper-button class="options-add" raised>
-              <iron-icon icon="icons:add-circle-outline"></iron-icon>
+          <h2> Song Rating and Playlist Generation App </h2>
+          <br>
+          <strong> Admin </strong>
+          <p> Add songs from spotify and create new playlist attributes and micro genres upon which users can create their playlists.
+          </p>
+          <a href="http://localhost:1337/auth/doauth?q=add">
+            <paper-button class="adminButton" raised>
+              <iron-icon icon="icons:build"></iron-icon>
             </paper-button>
           </a>
-          <p> Get your synesthetic playlist! </p>
-          Get your synesthetic playlist! </a>
-
-          <a href="http://localhost:1337/auth/doauth?add">
-            <paper-button class="options-get" raised>
-              <iron-icon icon="icons:get-app"></iron-icon>
+          <br>
+          <br>
+          <br>
+          <strong> Playlist Generator </strong>
+          <p> Create a playlist based on micor genres and admin added attributes.
+          </p>
+          <a href="http://localhost:1337/auth/doauth?q=playlist">
+            <paper-button class="spotifyButton">
+              <img class="spotifyLogo" src="../images/spotify.png">
             </paper-button>
           </a>
         </form>
@@ -71,9 +105,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return {
           token: {
             type: Object,
-            value: function(){
+            value: function () {
               var loc = window.location.pathname;
-             
+
             }
           },
 
