@@ -76,7 +76,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- Drawer content -->
       <app-drawer id="drawer" slot="drawer">
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="Sample" href="Sample"> Home</a>
+          <a name="sample" href="sample"> Home</a>
           <a name="jukebox-admin" href="http://frozen-basin-45731.herokuapp.com/auth/doauth?q=add">Admin</a>
           <a name="jukebox" href="http://frozen-basin-45731.herokuapp.com/auth/doauth?q=playlist">Generator</a>
         </iron-selector>
@@ -146,7 +146,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         // If no page was found in the route data, page will be an empty string.
         // Deault to 'view1' in that case.
-        this.page = page || 'Sample';
+        this.page = page || 'sample';
 
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
