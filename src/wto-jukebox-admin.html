@@ -120,15 +120,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
       auto></iron-ajax>
     <iron-ajax id="spotifySearch" handle-as="json" headers="[[token]]" on-response="handleSearchResponse"></iron-ajax>
-    <iron-ajax id="createAttribute" url="http://localhost:1337/jukeBox/createAttribute" handle-as="json" content-type="application/json"
+    <iron-ajax id="createAttribute" url="http://frozen-basin-45731.herokuapp.com/jukeBox/createAttribute" handle-as="json" content-type="application/json"
       on-response="handleCreateAttributeResponse"></iron-ajax>
-    <iron-ajax id="createGenre" url="http://localhost:1337/jukeBox/createGenre" handle-as="json" content-type="application/json"
+    <iron-ajax id="createGenre" url="http://frozen-basin-45731.herokuapp.com/jukeBox/createGenre" handle-as="json" content-type="application/json"
       on-response="handleCreateGenreResponse"></iron-ajax>
-    <iron-ajax id="getAttributes" url="http://localhost:1337/jukeBox/getAttributes" handle-as="json" content-type="application/json"
+    <iron-ajax id="getAttributes" url="http://frozen-basin-45731.herokuapp.com/jukeBox/getAttributes" handle-as="json" content-type="application/json"
       on-response="handleGetAttributes" auto></iron-ajax>
-    <iron-ajax id="getGenres" url="http://localhost:1337/jukeBox/getGenres" handle-as="json" content-type="application/json"
+    <iron-ajax id="getGenres" url="http://frozen-basin-45731.herokuapp.com/jukeBox/getGenres" handle-as="json" content-type="application/json"
       on-response="handleGetGenres" auto></iron-ajax>
-    <iron-ajax id="createSong" url="http://localhost:1337/jukeBox/createSong" handle-as="json" content-type="application/json"
+    <iron-ajax id="createSong" url="http://frozen-basin-45731.herokuapp.com/jukeBox/createSong" handle-as="json" content-type="application/json"
       on-response="handleCreateSongResponse"></iron-ajax>
     <paper-dialog on-dialog-confirm="_createSong" class="sendToTheFore" id="modal">
       <br>

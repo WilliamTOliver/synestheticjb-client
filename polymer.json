@@ -2,9 +2,9 @@
   "entrypoint": "index.html",
   "shell": "src/my-app.html",
   "fragments": [
-    "src/my-view1.html",
-    "src/my-view2.html",
-    "src/my-view3.html",
+    "src/wto-sample.html",
+    "src/wto-jukebox.html",
+    "src/wto-jukebox-admin.html",
     "src/my-view404.html"
   ],
   "sources": [

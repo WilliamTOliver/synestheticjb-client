@@ -70,9 +70,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </style>
         <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
             auto></iron-ajax>
-        <iron-ajax id="getAttributes" url="http://localhost:1337/jukeBox/getAttributes" handle-as="json" content-type="application/json"
+        <iron-ajax id="getAttributes" url="http://frozen-basin-45731.herokuapp.com/jukeBox/getAttributes" handle-as="json" content-type="application/json"
             on-response="handleGetAttributes" auto></iron-ajax>
-        <iron-ajax id="getGenres" url="http://localhost:1337/jukeBox/getGenres" handle-as="json" content-type="application/json"
+        <iron-ajax id="getGenres" url="http://frozen-basin-45731.herokuapp.com/jukeBox/getGenres" handle-as="json" content-type="application/json"
             on-response="handleGetGenres" auto></iron-ajax>
         <iron-ajax id="createPlaylist" method="POST" headers="[[token]]" handle-as="json" content-type="application/json" on-response="handlePlaylistResponse"></iron-ajax>
         <iron-ajax id="addSongsToPlaylist" method="POST" headers="[[token]]" handle-as="json" content-type="application/json" on-response="handlePlaylistResponse"></iron-ajax>
@@ -164,7 +164,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 search.attributes = attributes.map(attr => attr.value);
                 search.genres = genres.map(genre => genre.value)
                 this.$.getSongs.method = 'POST';
-                this.$.getSongs.url = 'http://localhost:1337/jukebox/getSongs';
+                this.$.getSongs.url = 'http://frozen-basin-45731.herokuapp.com/jukebox/getSongs';
                 this.$.getSongs.body = search;
                 this.$.getSongs.generateRequest()
             }
