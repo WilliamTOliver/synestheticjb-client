@@ -330,7 +330,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let songObj = {}
         let attributes = this.$.attrSelect.selectedItems
         songObj.attributes = attributes.map(attr => attr.value);
-        songObj.genre = this.$.genreSelect.selectedItem.value
+        let genres = this.$.genreSelect.selectedItems
+        songObj.genres = genres.map(genre => genre.value);
         songObj.spotify_id = this.selectedSong.id;
         this.$.createSong.body = songObj;
         this.$.createSong.method = 'POST';

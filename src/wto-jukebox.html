@@ -74,8 +74,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             on-response="handleGetAttributes" auto></iron-ajax>
         <iron-ajax id="getGenres" url="http://localhost:1337/jukeBox/getGenres" handle-as="json" content-type="application/json"
             on-response="handleGetGenres" auto></iron-ajax>
-        <iron-ajax id="createPlaylist" method="POST" headers="[[token]]" handle-as="json" content-type="application/json"
-            on-response="handlePlaylistResponse"></iron-ajax>
+        <iron-ajax id="createPlaylist" method="POST" headers="[[token]]" handle-as="json" content-type="application/json" on-response="handlePlaylistResponse"></iron-ajax>
+        <iron-ajax id="addSongsToPlaylist" method="POST" headers="[[token]]" handle-as="json" content-type="application/json" on-response="handlePlaylistResponse"></iron-ajax>
+        <iron-ajax id="getSongs" handle-as="json" content-type="application/json" on-response="handleSongResponse"></iron-ajax>
         <div class="card">
             <h2>Generate A Playlist</h2>
             <br>
@@ -138,6 +139,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 var response = e.detail.response;
                 this.set('userID', response.id)
             }
+            handleSongResponse(e) {
+                var response = e.detail.response;
+                console.log(response);
+
+                this.$.addSongsToPlaylist.url = 'https://api.spotify.com/v1/users/' + this.userID + '/playlists/' + this.playlistID + '/tracks';
+                this.$.addSongsToPlaylist.body = response.songs.map(id => 'spotify:track:' + id);
+                this.$.addSongsToPlaylist.generateRequest();
+
+            }
             handleGetAttributes(e) {
                 this.set('attributes', e.detail.response);
             }
@@ -146,6 +156,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             handlePlaylistResponse(e) {
                 console.log(e.detail.response)
+                let response = e.detail.response;
+                this.set('playlistID', response.id);
+                let search = {}
+                let attributes = this.$.attrSelect.selectedItems
+                let genres = this.$.genreSelect.selectedItems
+                search.attributes = attributes.map(attr => attr.value);
+                search.genres = genres.map(genre => genre.value)
+                this.$.getSongs.method = 'POST';
+                this.$.getSongs.url = 'http://localhost:1337/jukebox/getSongs';
+                this.$.getSongs.body = search;
+                this.$.getSongs.generateRequest()
             }
             initializePlaylist(name) {
                 let body = {
@@ -166,7 +187,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 search.playlist_name = this.$.playlistName.value;
                 search.userID = this.userID;
                 search.currentToken = this.token;
-                this.initializePlaylist(search.playlist_name)
+                this.initializePlaylist(this.$.playlistName.value)
 
                 // this.$.createPlaylist.body = search;
                 // this.$.createPlaylist.generateRequest()
