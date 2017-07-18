@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="./../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="./../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="./../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="./../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="./../bower_components/paper-input/paper-input.html">
 <link rel="import" href="./../bower_components/paper-dialog/paper-dialog.html">
@@ -110,6 +111,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         float: left;
       }
 
+      .help {
+        left: 90%;
+      }
+
       .sendToTheFore {
         width: 500px;
         margin-left: 100px;
@@ -168,10 +173,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-button on-tap="_createSong" dialog-confirm autofocus>Submit</paper-button>
       </div>
     </paper-dialog>
+    <iron-collapse id="collapse">
+      <div class="card">
+        <p> As an admin you can change the way playlists are generated in the 'Generator' side of the app.
+        </p>
+        <p> Within your wheelhouse, as admin, are three tools:</p>
+        <p> <i> Add Track: </i> Search Spotify to add tracks to the app, describing them as you do, by adding genre and attribute
+          tags to the selected track.</p>
+        <p> <i> Add Genre: </i> Add a genre name and descirption, which will be saved and used in the 'Add Track' tool to describe
+          songs added to the app</p>
+        <p> <i> Add Attribute: </i> Same as 'Add Genre', but can include any type of non-genre attribute a user may want to create
+          their playlist based on.</p>
+        <p> Create a playlist based on micor genres and admin added attributes.
+        </p>
+      </div>
+
+    </iron-collapse>
+
     <div class="card">
       <iron-form>
         <form class$="{{formStyling}}" method="get" action="/form/handler">
           <h1> Tracks </h1>
+          <paper-button class="help" on-click="toggleCollapse">
+            <iron-icon icon="icons:help-outline"></iron-icon>
+          </paper-button>
           <paper-search-panel on-paper-search-search="_loadData" search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]"
             loading="[[loading]]">
           </paper-search-panel>
@@ -221,9 +246,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       <form class$="{{formStyling}}" method="get" action="/form/handler">
         <h1> Attributes </h1>
+        <paper-button class="help" on-click="toggleCollapse">
+          <iron-icon icon="icons:help-outline"></iron-icon>
+        </paper-button>
         <paper-input id="attrName" label="Name"></paper-input>
         <paper-input id="attrDescription" label="Description"></paper-input>
-          <i>[[attrLog]]</i>
+        <i>[[attrLog]]</i>
         <div>
           <paper-button class="attrBttn" on-tap="_addAttribute" raised>Submit</paper-button>
         </div>
@@ -232,9 +260,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       <form class$="{{formStyling}}" method="get" action="/form/handler">
         <h1> Genres </h1>
+        <paper-button class="help" on-click="toggleCollapse">
+          <iron-icon icon="icons:help-outline"></iron-icon>
+        </paper-button>
         <paper-input id="genName" label="Name"></paper-input>
         <paper-input id="genDescription" label="Description"></paper-input>
-          <i>[[genLog]]</i>
+        <i>[[genLog]]</i>
         <div>
           <paper-button class="attrBttn" on-tap="_addGenre" raised>Submit</paper-button>
         </div>
@@ -292,6 +323,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           return 'no artist name available'
         }
+      }
+      toggleCollapse() {
+        this.$.collapse.toggle();
       }
       _getImage(a) {
         var image = a[0];

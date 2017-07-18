@@ -15,6 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="./../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="./../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="./../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="./../bower_components/polymer/polymer-element.html">
 <link rel="import" href="./shared-styles.html">
 
@@ -72,26 +73,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <iron-form>
         <form method="get" action="/form/handler">
           <h2> Song Rating and Playlist Generation App </h2>
-          <br>
-          <strong> Admin </strong>
-          <p> Add songs from spotify and create new playlist attributes and micro genres upon which users can create their playlists.
-          </p>
           <a href="https://frozen-basin-45731.herokuapp.com/auth/doauth?q=add">
-            <paper-button class="adminButton" raised>
+            <paper-button id="adminButton" class="adminButton" raised>
               <iron-icon icon="icons:build"></iron-icon>
             </paper-button>
           </a>
-          <br>
-          <br>
-          <br>
-          <strong> Playlist Generator </strong>
-          <p> Create a playlist based on micor genres and admin added attributes.
-          </p>
           <a href="https://frozen-basin-45731.herokuapp.com/auth/doauth?q=playlist">
-            <paper-button class="spotifyButton">
+            <paper-button id="spotifyButton" class="spotifyButton">
               <img class="spotifyLogo" src="../images/spotify.png">
             </paper-button>
           </a>
+          
+          <paper-tooltip animation-delay="0" position="top" for="adminButton" offset="0">Admin</paper-tooltip>
+          <paper-tooltip animation-delay="0" position="top" for="spotifyButton" offset="0">Generator</paper-tooltip>
         </form>
       </iron-form>
     </div>
