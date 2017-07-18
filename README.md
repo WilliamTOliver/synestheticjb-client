@@ -1,4 +1,4 @@
-# SJB - A Sample Portfolio Piece by William T Oliver
+# SJB Client - A Sample Portfolio Piece by William T Oliver
 
 ##### Prerequisites to Dev on a Forked Version of this Project
 
@@ -11,6 +11,14 @@ Second, install [Bower](https://bower.io/) using [npm](https://www.npmjs.com)
 
     npm install -g bower
 
+Third, do a find-replace-all in your text or code editor for:
+
+    [[SERVER]] 
+    -with your server's path.
+    -if you are pairing this client with it's concurrently built API, replace this with:
+    http://localhost:1337/
+
+    
 ### Start the development server
 
 This command serves the app at `http://localhost:8080` and provides basic URL
