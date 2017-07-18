@@ -13,7 +13,7 @@ Second, install [Bower](https://bower.io/) using [npm](https://www.npmjs.com)
 
 Third, do a find-replace-all in your text or code editor for:
 
-    [[SERVER]] 
+    https://frozen-basin-45731.herokuapp.com/ 
     -with your server's path.
     -if you are pairing this client with it's concurrently built API, replace this with:
     http://localhost:1337/
