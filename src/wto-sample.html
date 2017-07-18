@@ -67,7 +67,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: black;
       }
     </style>
-    <iron-ajax id="initialAuthentication" handle-as="json" url="https://frozen-basin-45731.herokuapp.com/auth/doAuth" on-response="_handleAuthResponse"></iron-ajax>
+    <iron-ajax id="initialAuthentication" handle-as="json" url="[[SERVER]]auth/doAuth" on-response="_handleAuthResponse"></iron-ajax>
     <iron-ajax id="authRedirect" handle-as="json" on-response="_handleAuthCallback"></iron-ajax>
 
     <div class="card">
@@ -76,12 +76,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <form method="get" action="/form/handler">
           <h2> Song Rating and Playlist Generation App </h2>
           <div>
-          <a href="https://frozen-basin-45731.herokuapp.com/auth/doauth?q=add">
+          <a href="[[SERVER]]auth/doauth?q=add">
             <paper-button id="adminButton" class="adminButton" raised>
               <iron-icon icon="icons:build"></iron-icon>
             </paper-button>
           </a>
-          <a href="https://frozen-basin-45731.herokuapp.com/auth/doauth?q=playlist">
+          <a href="[[SERVER]]auth/doauth?q=playlist">
             <paper-button id="spotifyButton" class="spotifyButton">
               <img class="spotifyLogo" src="../images/spotify.png">
             </paper-button>
