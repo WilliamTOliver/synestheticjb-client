@@ -141,8 +141,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             handleSongResponse(e) {
                 var response = e.detail.response;
-                console.log(response);
-
                 this.$.addSongsToPlaylist.url = 'https://api.spotify.com/v1/users/' + this.userID + '/playlists/' + this.playlistID + '/tracks';
                 this.$.addSongsToPlaylist.body = response.songs.map(id => 'spotify:track:' + id);
                 this.$.addSongsToPlaylist.generateRequest();
@@ -155,7 +153,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.set('genres', e.detail.response);
             }
             handlePlaylistResponse(e) {
-                console.log(e.detail.response)
                 let response = e.detail.response;
                 this.set('playlistID', response.id);
                 let search = {}
@@ -168,31 +165,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.$.getSongs.body = search;
                 this.$.getSongs.generateRequest()
             }
-            initializePlaylist(name) {
+            createPlaylist(name) {
+                // initialize playlist container on spotify - no songs yet
                 let body = {
-                    'name': name
+                    'name': this.$.playlistName.value
                 }
                 this.$.createPlaylist.body = body;
                 this.$.createPlaylist.url = 'https://api.spotify.com/v1/users/' + this.userID + '/playlists';
                 this.$.createPlaylist.method = 'POST';
                 this.$.createPlaylist.generateRequest();
-            }
-            createPlaylist(e) {
-
-                let search = {}
-                let attributes = this.$.attrSelect.selectedItems
-                let genres = this.$.genreSelect.selectedItems
-                search.attributes = attributes.map(attr => attr.value);
-                search.genre = genres.map(genre => genre.value)
-                search.playlist_name = this.$.playlistName.value;
-                search.userID = this.userID;
-                search.currentToken = this.token;
-                this.initializePlaylist(this.$.playlistName.value)
-
-                // this.$.createPlaylist.body = search;
-                // this.$.createPlaylist.generateRequest()
-
-                console.log(search);
             }
         }
 

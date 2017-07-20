@@ -69,30 +69,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <iron-ajax id="initialAuthentication" handle-as="json" url="https://frozen-basin-45731.herokuapp.com/auth/doAuth" on-response="_handleAuthResponse"></iron-ajax>
     <iron-ajax id="authRedirect" handle-as="json" on-response="_handleAuthCallback"></iron-ajax>
-
     <div class="card">
-
       <iron-form>
         <form method="get" action="/form/handler">
           <h2> Song Rating and Playlist Generation App </h2>
-          <p>Note: Server hosted via free (slow) Heroku hosting, click on either link below to visit the Admin or Generator pages.</p>
+          <p>Note: Server hosted via free (slow) Heroku hosting, click on either link below to visit the Admin or Generator
+            pages.</p>
           <p><i> This requires authenticating with Spotify. </i></p>
           <div>
-          <a href="https://frozen-basin-45731.herokuapp.com/auth/doauth?q=add">
-            <paper-button id="adminButton" class="adminButton" raised>
-              <iron-icon icon="icons:build"></iron-icon>
+            <a href="https://frozen-basin-45731.herokuapp.com/auth/doauth?q=add">
+              <paper-button id="adminButton" class="adminButton" raised>
+                <iron-icon icon="icons:build"></iron-icon>
+              </paper-button>
+            </a>
+            <a href="https://frozen-basin-45731.herokuapp.com/auth/doauth?q=playlist">
+              <paper-button id="spotifyButton" class="spotifyButton">
+                <img class="spotifyLogo" src="../images/spotify.png">
+              </paper-button>
+            </a>
+            <paper-button id="help" class="help" on-click="toggleCollapse">
+              <iron-icon icon="icons:help-outline"></iron-icon>
             </paper-button>
-          </a>
-          <a href="https://frozen-basin-45731.herokuapp.com/auth/doauth?q=playlist">
-            <paper-button id="spotifyButton" class="spotifyButton">
-              <img class="spotifyLogo" src="../images/spotify.png">
-            </paper-button>
-          </a>
-          <paper-button id="help" class="help" on-click="toggleCollapse">
-            <iron-icon icon="icons:help-outline"></iron-icon>
-          </paper-button>
           </div>
-
           <paper-tooltip animation-delay="0" position="top" for="adminButton" offset="0">Admin</paper-tooltip>
           <paper-tooltip animation-delay="0" position="top" for="spotifyButton" offset="0">Generator</paper-tooltip>
           <paper-tooltip animation-delay="0" position="top" for="help" offset="0">About the App</paper-tooltip>
@@ -102,62 +100,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-collapse id="collapse">
       <div class="card">
         <strong> Summary </strong>
-        <p> This project was written independantly within a couple of weeks in July, 2017 by William T Oliver as a personal, educational project and portfolio piece. The goal was to create something that utilized technology learned and previously practiced under non-disclosure aggreements, while working on OPS(other people's software), while testing out an old idea for a playlist generator app.
+        <p> This project was written independantly within a couple of weeks in July, 2017 by William T Oliver as a personal,
+          educational project and portfolio piece. The goal was to create something that utilized technology learned and
+          previously practiced under non-disclosure aggreements, while working on OPS(other people's software), while testing
+          out an old idea for a playlist generator app.
         </p>
         <p>
-        <a href="https://www.linkedin.com/in/william-trevor-oliver-b6933a108/" target="_blank"><paper-button raised><img class="spotifyLogo" src="./../images/Linkedin.png"></paper-button></a>
+          <a href="https://www.linkedin.com/in/william-trevor-oliver-b6933a108/" target="_blank">
+            <paper-button raised><img class="spotifyLogo" src="./../images/Linkedin.png"></paper-button>
+          </a>
         </p>
         <strong> Frameworks </strong>
         <p> <i>Front End:</i> The front end of this project is written in Polymer 2.0</p>
-        <a href="https://github.com/WilliamTOliver/synestheticjb-client" target="_blank"><paper-button raised><img class="spotifyLogo" src="./../images/GitHub-Mark.png"></paper-button></a>
-        <p> <i>Back End:</i> The back end of this project is written in SailsJS 0.12, and MVC framework wrapped tightly around ExpressJS (NodeJS)</p>
-        <a href="https://github.com/WilliamTOliver/synestheticjb-api" target="_blank"><paper-button raised><img class="spotifyLogo" src="./../images/GitHub-Mark.png"></paper-button></a>
+        <a href="https://github.com/WilliamTOliver/synestheticjb-client" target="_blank">
+          <paper-button raised><img class="spotifyLogo" src="./../images/GitHub-Mark.png"></paper-button>
+        </a>
+        <p> <i>Back End:</i> The back end of this project is written in SailsJS 0.12, and MVC framework wrapped tightly around
+          ExpressJS (NodeJS)</p>
+        <a href="https://github.com/WilliamTOliver/synestheticjb-api" target="_blank">
+          <paper-button raised><img class="spotifyLogo" src="./../images/GitHub-Mark.png"></paper-button>
+        </a>
         <p> <i>DB:</i> This app utilizes MongoDB, a NoSQL, document based database. </p>
-        <p> <i>Hosting:</i> The client for this app is hosted on Google's App Engine. The server is hosted on Heroku, with mLab's addon for MongoDB hosting. </p>
-        <p> <i>Coding Standards:</i> Frameworks were chosen to work primarily in JavaScript and practice in the contemporaneously new ES6 Standard, including the recent update to the LTS(long-term-service) version of NodeJS </p>
-        
+        <p> <i>Hosting:</i> The client for this app is hosted on Google's App Engine. The server is hosted on Heroku, with mLab's
+          addon for MongoDB hosting. </p>
+        <p> <i>Coding Standards:</i> Frameworks were chosen to work primarily in JavaScript and practice in the contemporaneously
+          new ES6 Standard, including the recent update to the LTS(long-term-service) version of NodeJS </p>
       </div>
-
     </iron-collapse>
   </template>
-
   <script>
     class Sample extends Polymer.Element {
       static get is() { return 'wto-sample'; }
-
       static get properties() {
         return {
-          token: {
-            type: Object,
-            value: function () {
-              var loc = window.location.pathname;
-
-            }
-          },
-
           routeData: Object
         }
       }
       ready() {
         super.ready();
-        // When possible, use afterNextRender to defer non-critical
-        // work until after first paint.
         Polymer.RenderStatus.afterNextRender(this, function () {
-          var a = window.location.pathname;
-          console.log(a)
         });
       }
-      _redirectPlaylist() {
-        this.$.initialAuthentication.generateRequest();
-      }
-      _redirectAdd() {
-
-      }
-
       _handleAuthResponse(e) {
-        if (e) { console.log(e) }
-        if (e.detail) { console.log(e.detail) }
-        if (e.detail.response) { console.log(e.detail.response) }
         this.$.authRedirect.url = e.detail.response.url;
         this.$.authRedirect.headers = {
           "Access-Control-Allow-Origin": "*",
@@ -166,17 +150,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.authRedirect.generateRequest()
       }
       _handleAuthCallback(e) {
-        if (e) { console.log(e) }
-        if (e.detail) { console.log(e.detail) }
-        if (e.detail.response) { console.log(e.detail.response) }
-
+        // if (e.detail.response) { console.log(e.detail.response) }
       }
       toggleCollapse() {
+        // toggle expand collapse within id=collapse
         this.$.collapse.toggle();
       }
-
-
-
     }
     window.customElements.define(Sample.is, Sample);
   </script>
