@@ -72,21 +72,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </style>
         <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
             auto></iron-ajax>
-<<<<<<< HEAD
-<<<<<<< HEAD
-        <iron-ajax id="getAttributes" url="[[SERVER]]jukeBox/getAttributes" handle-as="json" content-type="application/json"
-            on-response="handleGetAttributes" auto></iron-ajax>
-        <iron-ajax id="getGenres" url="[[SERVER]]jukeBox/getGenres" handle-as="json" content-type="application/json"
-=======
         <iron-ajax id="getAttributes" url="[[server]]/jukeBox/getAttributes" handle-as="json" content-type="application/json"
             on-response="handleGetAttributes" auto></iron-ajax>
         <iron-ajax id="getGenres" url="[[server]]/jukeBox/getGenres" handle-as="json" content-type="application/json"
->>>>>>> production
-=======
-        <iron-ajax id="getAttributes" url="[[SERVER]]jukeBox/getAttributes" handle-as="json" content-type="application/json"
-            on-response="handleGetAttributes" auto></iron-ajax>
-        <iron-ajax id="getGenres" url="[[SERVER]]jukeBox/getGenres" handle-as="json" content-type="application/json"
->>>>>>> 3f3189e137f98f8a0a63ec6853a2a5f401ca64df
             on-response="handleGetGenres" auto></iron-ajax>
         <iron-ajax id="createPlaylist" method="POST" headers="[[token]]" handle-as="json" content-type="application/json" on-response="handlePlaylistResponse"></iron-ajax>
         <iron-ajax id="addSongsToPlaylist" method="POST" headers="[[token]]" handle-as="json" content-type="application/json" on-response="handlePlaylistResponse"></iron-ajax>
@@ -181,15 +169,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 search.attributes = attributes.map(attr => attr.value);
                 search.genres = genres.map(genre => genre.value)
                 this.$.getSongs.method = 'POST';
-<<<<<<< HEAD
-<<<<<<< HEAD
-                this.$.getSongs.url = '[[SERVER]]jukebox/getSongs';
-=======
                 this.$.getSongs.url = this.server + '/jukebox/getSongs';
->>>>>>> production
-=======
-                this.$.getSongs.url = '[[SERVER]]jukebox/getSongs';
->>>>>>> 3f3189e137f98f8a0a63ec6853a2a5f401ca64df
                 this.$.getSongs.body = search;
                 this.$.getSongs.generateRequest()
             }

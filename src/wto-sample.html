@@ -67,42 +67,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: black;
       }
     </style>
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <iron-ajax id="initialAuthentication" handle-as="json" url="[[SERVER]]auth/doAuth" on-response="_handleAuthResponse"></iron-ajax>
-=======
     <iron-ajax id="initialAuthentication" handle-as="json" url="[[server]]/auth/doAuth" on-response="_handleAuthResponse"></iron-ajax>
->>>>>>> production
-=======
-    <iron-ajax id="initialAuthentication" handle-as="json" url="[[SERVER]]auth/doAuth" on-response="_handleAuthResponse"></iron-ajax>
->>>>>>> 3f3189e137f98f8a0a63ec6853a2a5f401ca64df
     <iron-ajax id="authRedirect" handle-as="json" on-response="_handleAuthCallback"></iron-ajax>
     <div class="card">
       <iron-form>
         <form method="get" action="/form/handler">
           <h2> Song Rating and Playlist Generation App </h2>
           <p>Note: Server hosted via free (slow) Heroku hosting, click on either link below to visit the Admin or Generator
-            pages.</p>
+            pages.
+          </p>
           <p><i> This requires authenticating with Spotify. </i></p>
           <div>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 3f3189e137f98f8a0a63ec6853a2a5f401ca64df
-          <a href="[[SERVER]]auth/doauth?q=add">
-            <paper-button id="adminButton" class="adminButton" raised>
-              <iron-icon icon="icons:build"></iron-icon>
-            </paper-button>
-          </a>
-          <a href="[[SERVER]]auth/doauth?q=playlist">
-            <paper-button id="spotifyButton" class="spotifyButton">
-              <img class="spotifyLogo" src="../images/spotify.png">
-            </paper-button>
-          </a>
-          <paper-button id="help" class="help" on-click="toggleCollapse">
-            <iron-icon icon="icons:help-outline"></iron-icon>
-          </paper-button>
-=======
             <a href="[[server]]/auth/doauth?q=add">
               <paper-button id="adminButton" class="adminButton" raised>
                 <iron-icon icon="icons:build"></iron-icon>
@@ -116,7 +91,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-button id="help" class="help" on-click="toggleCollapse">
               <iron-icon icon="icons:help-outline"></iron-icon>
             </paper-button>
->>>>>>> production
           </div>
           <paper-tooltip animation-delay="0" position="top" for="adminButton" offset="0">Admin</paper-tooltip>
           <paper-tooltip animation-delay="0" position="top" for="spotifyButton" offset="0">Generator</paper-tooltip>

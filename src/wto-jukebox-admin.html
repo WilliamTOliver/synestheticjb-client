@@ -125,34 +125,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
       auto></iron-ajax>
     <iron-ajax id="spotifySearch" handle-as="json" headers="[[token]]" on-response="handleSearchResponse"></iron-ajax>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 3f3189e137f98f8a0a63ec6853a2a5f401ca64df
-    <iron-ajax id="createAttribute" url="[[SERVER]]jukeBox/createAttribute" handle-as="json" content-type="application/json"
-      on-response="handleCreateAttributeResponse"></iron-ajax>
-    <iron-ajax id="createGenre" url="[[SERVER]]jukeBox/createGenre" handle-as="json" content-type="application/json"
-      on-response="handleCreateGenreResponse"></iron-ajax>
-    <iron-ajax id="getAttributes" url="[[SERVER]]jukeBox/getAttributes" handle-as="json" content-type="application/json"
-      on-response="handleGetAttributes" auto></iron-ajax>
-    <iron-ajax id="getGenres" url="[[SERVER]]jukeBox/getGenres" handle-as="json" content-type="application/json"
-      on-response="handleGetGenres" auto></iron-ajax>
-    <iron-ajax id="createSong" url="[[SERVER]]jukeBox/createSong" handle-as="json" content-type="application/json"
-<<<<<<< HEAD
-=======
     <iron-ajax id="createAttribute" url="[[server]]/jukeBox/createAttribute" handle-as="json" content-type="application/json"
       on-response="handleCreateAttributeResponse"></iron-ajax>
-    <iron-ajax id="createGenre" url="[[server]]/jukeBox/createGenre" handle-as="json" content-type="application/json"
-      on-response="handleCreateGenreResponse"></iron-ajax>
-    <iron-ajax id="getAttributes" url="[[server]]/jukeBox/getAttributes" handle-as="json" content-type="application/json"
-      on-response="handleGetAttributes" auto></iron-ajax>
-    <iron-ajax id="getGenres" url="[[server]]/jukeBox/getGenres" handle-as="json" content-type="application/json"
-      on-response="handleGetGenres" auto></iron-ajax>
-    <iron-ajax id="createSong" url="[[server]]/jukeBox/createSong" handle-as="json" content-type="application/json"
->>>>>>> production
-=======
->>>>>>> 3f3189e137f98f8a0a63ec6853a2a5f401ca64df
-      on-response="handleCreateSongResponse"></iron-ajax>
+    <iron-ajax id="createGenre" url="[[server]]/jukeBox/createGenre" handle-as="json" content-type="application/json" on-response="handleCreateGenreResponse"></iron-ajax>
+    <iron-ajax id="getAttributes" url="[[server]]/jukeBox/getAttributes" handle-as="json" content-type="application/json" on-response="handleGetAttributes"
+      auto></iron-ajax>
+    <iron-ajax id="getGenres" url="[[server]]/jukeBox/getGenres" handle-as="json" content-type="application/json" on-response="handleGetGenres"
+      auto></iron-ajax>
+    <iron-ajax id="createSong" url="[[server]]/jukeBox/createSong" handle-as="json" content-type="application/json" on-response="handleCreateSongResponse"></iron-ajax>
     <paper-dialog class="sendToTheFore" id="confirmationModal">
       <br>
       <strong> Thank you! </strong>
