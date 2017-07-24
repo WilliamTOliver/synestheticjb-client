@@ -125,20 +125,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
       auto></iron-ajax>
     <iron-ajax id="spotifySearch" handle-as="json" headers="[[token]]" on-response="handleSearchResponse"></iron-ajax>
-    <iron-ajax id="createAttribute" url="https://frozen-basin-45731.herokuapp.com/jukeBox/createAttribute" handle-as="json" content-type="application/json"
+    <iron-ajax id="createAttribute" url="[[server]]/jukeBox/createAttribute" handle-as="json" content-type="application/json"
       on-response="handleCreateAttributeResponse"></iron-ajax>
-    <iron-ajax id="createGenre" url="https://frozen-basin-45731.herokuapp.com/jukeBox/createGenre" handle-as="json" content-type="application/json"
+    <iron-ajax id="createGenre" url="[[server]]/jukeBox/createGenre" handle-as="json" content-type="application/json"
       on-response="handleCreateGenreResponse"></iron-ajax>
-    <iron-ajax id="getAttributes" url="https://frozen-basin-45731.herokuapp.com/jukeBox/getAttributes" handle-as="json" content-type="application/json"
+    <iron-ajax id="getAttributes" url="[[server]]/jukeBox/getAttributes" handle-as="json" content-type="application/json"
       on-response="handleGetAttributes" auto></iron-ajax>
-    <iron-ajax id="getGenres" url="https://frozen-basin-45731.herokuapp.com/jukeBox/getGenres" handle-as="json" content-type="application/json"
+    <iron-ajax id="getGenres" url="[[server]]/jukeBox/getGenres" handle-as="json" content-type="application/json"
       on-response="handleGetGenres" auto></iron-ajax>
-    <iron-ajax id="createSong" url="https://frozen-basin-45731.herokuapp.com/jukeBox/createSong" handle-as="json" content-type="application/json"
+    <iron-ajax id="createSong" url="[[server]]/jukeBox/createSong" handle-as="json" content-type="application/json"
       on-response="handleCreateSongResponse"></iron-ajax>
     <paper-dialog class="sendToTheFore" id="confirmationModal">
-    <br>
+      <br>
       <strong> Thank you! </strong>
-    <p> Your track has been added to the Jukebox! </p>
+      <p> Your track has been added to the Jukebox! </p>
       <paper-button dialog-confirm autofocus>Continue</paper-button>
     </paper-dialog>
     <paper-dialog on-dialog-confirm="_createSong" class="sendToTheFore" id="modal">
@@ -302,7 +302,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Array,
             notify: true,
           },
-          routeData: Object
+          routeData: Object,
+          server: {
+            type: String,
+            notify: true
+          }
         }
       }
       ready() {

@@ -1,0 +1,69 @@
+<link rel="import" href="./../bower_components/iron-form/iron-form.html">
+<link rel="import" href="./../bower_components/app-route/app-route.html">
+<link rel="import" href="./../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="./../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="./../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./../bower_components/paper-input/paper-input.html">
+<link rel="import" href="./../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="./../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="./shared-styles.html">
+
+<dom-module id="wto-login">
+    <template>
+        <style include="shared-styles">
+             :host {
+                display: block;
+
+                padding: 10px;
+            }
+        </style>
+        <!-- <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
+            auto></iron-ajax> -->
+        ;alskdjfalsdkjf;alsdkjfa;lsdkjf;lasdkjf
+            <div>
+            <!-- <template is="dom-if" if="!isLoggedin"> -->
+            <paper-button>Log In</paper-button>
+            <paper-button>Sign Up</paper-button>
+            <!-- </template> -->
+            <!-- <template is="dom-if" if="isLoggedin"> -->
+            <paper-button>Profile</paper-button>
+            <paper-button>Log Out</paper-button>
+            <!-- </template> -->
+        </div>
+        <!-- <paper-dialog id="confirmationModal"> -->
+        <!-- </paper-dialog> -->
+    </template>
+
+    <script>
+        class Login extends Polymer.Element {
+            static get is() { return 'wto-login'; }
+
+            static get properties() {
+                return {
+                    routeData: Object,
+                    isLoggedin: {
+                        type: Boolean,
+                        value: true
+                    },
+                    server:{
+                        type: String,
+                        notify: true
+                    }
+                }
+            }
+            ready() {
+                super.ready();
+                Polymer.RenderStatus.afterNextRender(this, function () {
+                });
+            }
+            _expandItem(e) {
+                // open modal for selected song
+                this.set('selectedSong', e.model.item)
+                this.$.modal.open()
+            }
+        }
+        window.customElements.define(Login.is, Login);
+    </script>
+</dom-module>
