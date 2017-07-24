@@ -125,16 +125,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
       auto></iron-ajax>
     <iron-ajax id="spotifySearch" handle-as="json" headers="[[token]]" on-response="handleSearchResponse"></iron-ajax>
-    <iron-ajax id="createAttribute" url="https://frozen-basin-45731.herokuapp.com/jukeBox/createAttribute" handle-as="json" content-type="application/json"
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3f3189e137f98f8a0a63ec6853a2a5f401ca64df
+    <iron-ajax id="createAttribute" url="[[SERVER]]jukeBox/createAttribute" handle-as="json" content-type="application/json"
       on-response="handleCreateAttributeResponse"></iron-ajax>
-    <iron-ajax id="createGenre" url="https://frozen-basin-45731.herokuapp.com/jukeBox/createGenre" handle-as="json" content-type="application/json"
+    <iron-ajax id="createGenre" url="[[SERVER]]jukeBox/createGenre" handle-as="json" content-type="application/json"
       on-response="handleCreateGenreResponse"></iron-ajax>
-    <iron-ajax id="getAttributes" url="https://frozen-basin-45731.herokuapp.com/jukeBox/getAttributes" handle-as="json" content-type="application/json"
+    <iron-ajax id="getAttributes" url="[[SERVER]]jukeBox/getAttributes" handle-as="json" content-type="application/json"
       on-response="handleGetAttributes" auto></iron-ajax>
-    <iron-ajax id="getGenres" url="https://frozen-basin-45731.herokuapp.com/jukeBox/getGenres" handle-as="json" content-type="application/json"
+    <iron-ajax id="getGenres" url="[[SERVER]]jukeBox/getGenres" handle-as="json" content-type="application/json"
       on-response="handleGetGenres" auto></iron-ajax>
-    <iron-ajax id="createSong" url="https://frozen-basin-45731.herokuapp.com/jukeBox/createSong" handle-as="json" content-type="application/json"
+    <iron-ajax id="createSong" url="[[SERVER]]jukeBox/createSong" handle-as="json" content-type="application/json"
+<<<<<<< HEAD
+=======
+    <iron-ajax id="createAttribute" url="[[server]]/jukeBox/createAttribute" handle-as="json" content-type="application/json"
+      on-response="handleCreateAttributeResponse"></iron-ajax>
+    <iron-ajax id="createGenre" url="[[server]]/jukeBox/createGenre" handle-as="json" content-type="application/json"
+      on-response="handleCreateGenreResponse"></iron-ajax>
+    <iron-ajax id="getAttributes" url="[[server]]/jukeBox/getAttributes" handle-as="json" content-type="application/json"
+      on-response="handleGetAttributes" auto></iron-ajax>
+    <iron-ajax id="getGenres" url="[[server]]/jukeBox/getGenres" handle-as="json" content-type="application/json"
+      on-response="handleGetGenres" auto></iron-ajax>
+    <iron-ajax id="createSong" url="[[server]]/jukeBox/createSong" handle-as="json" content-type="application/json"
+>>>>>>> production
+=======
+>>>>>>> 3f3189e137f98f8a0a63ec6853a2a5f401ca64df
       on-response="handleCreateSongResponse"></iron-ajax>
+    <paper-dialog class="sendToTheFore" id="confirmationModal">
+      <br>
+      <strong> Thank you! </strong>
+      <p> Your track has been added to the Jukebox! </p>
+      <paper-button dialog-confirm autofocus>Continue</paper-button>
+    </paper-dialog>
     <paper-dialog on-dialog-confirm="_createSong" class="sendToTheFore" id="modal">
       <br>
       <strong>[[selectedSong.name]]</strong>
@@ -253,7 +277,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-input id="attrDescription" label="Description"></paper-input>
         <i>[[attrLog]]</i>
         <div>
-          <paper-button class="attrBttn" on-tap="_addAttribute" raised>Submit</paper-button>
+          <paper-button class="attrBttn" on-tap="_createAttribute" raised>Submit</paper-button>
         </div>
       </form>
     </div>
@@ -267,7 +291,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-input id="genDescription" label="Description"></paper-input>
         <i>[[genLog]]</i>
         <div>
-          <paper-button class="attrBttn" on-tap="_addGenre" raised>Submit</paper-button>
+          <paper-button class="attrBttn" on-tap="_createGenre" raised>Submit</paper-button>
         </div>
       </form>
     </div>
@@ -288,7 +312,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               return tokenObj;
             }
           },
-          userName: String,
           selectedSong: {
             type: Object,
             notify: true
@@ -297,23 +320,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Array,
             notify: true,
           },
-
-          routeData: Object
+          routeData: Object,
+          server: {
+            type: String,
+            notify: true
+          }
         }
       }
       ready() {
         super.ready();
-        // When possible, use afterNextRender to defer non-critical
-        // work until after first paint.
         Polymer.RenderStatus.afterNextRender(this, function () {
           this.set('formStyling', 'hideForm')
         });
-      }
-      _redirectPlaylist() {
-        this.$.initialAuthentication.generateRequest();
-      }
-      logChanges(e) {
-
       }
       _getArtistName(a) {
         var artist = a[0];
@@ -333,41 +351,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return href;
       }
       _expandItem(e) {
+        // open modal for selected song
         this.set('selectedSong', e.model.item)
         this.$.modal.open()
-
       }
       _loadData() {
+        // load data from spotify search query 
         var encodedSearchTerm = encodeURIComponent(this.search);
         this.$.spotifySearch.url = 'https://api.spotify.com/v1/search?type=track&q=' + encodedSearchTerm
         this.$.spotifySearch.generateRequest();
       }
-      _addAttribute() {
+      _createAttribute() {
         let attribute = {};
         attribute.name = this.$.attrName.value;
         attribute.description = this.$.attrDescription.value;
-
         this.$.createAttribute.body = attribute;
         this.$.createAttribute.method = 'POST';
         this.$.createAttribute.generateRequest();
       }
-      _addGenre() {
+      _createGenre() {
         let genre = {};
         genre.name = this.$.genName.value;
         genre.description = this.$.genDescription.value;
-
         this.$.createGenre.body = genre;
         this.$.createGenre.method = 'POST';
         this.$.createGenre.generateRequest();
       }
       _createSong(e) {
         let songObj = {}
+        // Get selected attribute IDS
         let attributes = this.$.attrSelect.selectedItems
         songObj.attributes = attributes.map(attr => attr.value);
+        // Deselect items
         this.$.attrSelect.selectedItems = []
+        // Get selected genre IDS
         let genres = this.$.genreSelect.selectedItems
         songObj.genres = genres.map(genre => genre.value);
+        // Deselect items
         this.$.genreSelect.selectedItems = [];
+        // Get song spotify id
         songObj.spotify_id = this.selectedSong.id;
         this.$.createSong.body = songObj;
         this.$.createSong.method = 'POST';
@@ -380,7 +402,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.set('genres', e.detail.response);
       }
       handleCreateAttributeResponse(e) {
-        console.log(e.detail.response)
         if (e.detail.response.name) {
           this.set('attrLog', 'Thank you for your submission. ')
           this.$.attrName.value = "";
@@ -391,7 +412,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
       handleCreateGenreResponse(e) {
-        console.log(e.detail.response)
         if (e.detail.response.name) {
           this.set('genLog', 'Thank you for your submission. ')
           this.$.genName.value = "";
@@ -402,7 +422,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
       handleCreateSongResponse(e) {
-        console.log(e.detail.response)
+        this.$.confirmationModal.open()
       }
       handleSearchResponse(e) {
         var response = e.detail.response;
