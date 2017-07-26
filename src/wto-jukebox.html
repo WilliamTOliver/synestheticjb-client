@@ -23,7 +23,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="./../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="./../bower_components/isw-dropdown-menu/isw-dropdown-menu.html">
 <link rel="import" href="./shared-styles.html">
-<link rel="lazy-import" href="./wto-login.html">
 
 
 
@@ -80,8 +79,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-ajax id="addSongsToPlaylist" method="POST" headers="[[token]]" handle-as="json" content-type="application/json" on-response="handlePlaylistResponse"></iron-ajax>
         <iron-ajax id="getSongs" handle-as="json" content-type="application/json" on-response="handleSongResponse"></iron-ajax>
         <div class="card">
-            <wto-login></wto-login>
-
             <h2>Generate A Playlist</h2>
             <br>
             <strong> Pick a Genre </strong>
