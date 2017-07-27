@@ -124,7 +124,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
       auto></iron-ajax>
-    <iron-ajax id="spotifySearch" handle-as="json" headers="[[token]]" on-response="handleSearchResponse"></iron-ajax>
+    <iron-ajax id="spotifyTrackSearch" handle-as="json" headers="[[token]]" on-response="handleSearchTracksResponse"></iron-ajax>
+    <iron-ajax id="spotifyPlaylistSearch" handle-as="json" headers="[[token]]" on-response="handleSearchPlaylistsResponse"></iron-ajax>
     <iron-ajax id="createAttribute" url="[[server]]/jukeBox/createAttribute" handle-as="json" content-type="application/json"
       on-response="handleCreateAttributeResponse"></iron-ajax>
     <iron-ajax id="createGenre" url="[[server]]/jukeBox/createGenre" handle-as="json" content-type="application/json" on-response="handleCreateGenreResponse"></iron-ajax>
@@ -133,13 +134,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax id="getGenres" url="[[server]]/jukeBox/getGenres" handle-as="json" content-type="application/json" on-response="handleGetGenres"
       auto></iron-ajax>
     <iron-ajax id="createSong" url="[[server]]/jukeBox/createSong" handle-as="json" content-type="application/json" on-response="handleCreateSongResponse"></iron-ajax>
+    <iron-ajax id="getTracksFromPlaylist" headers="[[token]]" handle-as="json" content-type="application/json" on-response="tracksCallback"></iron-ajax>
     <paper-dialog class="sendToTheFore" id="confirmationModal">
       <br>
       <strong> Thank you! </strong>
       <p> Your track has been added to the Jukebox! </p>
       <paper-button dialog-confirm autofocus>Continue</paper-button>
     </paper-dialog>
-    <paper-dialog on-dialog-confirm="_createSong" class="sendToTheFore" id="modal">
+    <paper-dialog on-dialog-confirm="_createSong" class="sendToTheFore" id="songModal">
       <br>
       <strong>[[selectedSong.name]]</strong>
       <br>
@@ -153,7 +155,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <table>
         <tr>
           <td>
-            <isw-dropdown-menu id="genreSelect" multi attr-for-selected="value" label="Genre">
+            <isw-dropdown-menu id="songGenreSelect" multi attr-for-selected="value" label="Genre">
               <template is="dom-repeat" items="[[genres]]" as='genre'>
                 <paper-item value="[[genre.id]]">
                   [[genre.name]]
@@ -162,7 +164,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </isw-dropdown-menu>
           </td>
           <td>
-            <isw-dropdown-menu id="attrSelect" multi attr-for-selected="value" label="Tags (select all that apply)">
+            <isw-dropdown-menu id="songAttrSelect" multi attr-for-selected="value" label="Tags (select all that apply)">
               <template is="dom-repeat" items="[[attributes]]" as='attr'>
                 <paper-item value="[[attr.id]]">
                   [[attr.name]]
@@ -175,6 +177,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="buttons">
         <paper-button dialog-dismiss autofocus>Cancel</paper-button>
         <paper-button on-tap="_createSong" dialog-confirm autofocus>Submit</paper-button>
+      </div>
+    </paper-dialog>
+    <paper-dialog on-dialog-confirm="_createSong" class="sendToTheFore" id="playlistModal">
+      <br>
+      <strong>[[selectedPlaylist.name]]</strong>
+      <br>
+      <br>
+      <br>
+      <p>When you listen to [[selectedPlaylist.name]], what dance genre do you see it fitting into best?
+      </p>
+      <p> Beyond that, what are some tags that would help other djs/dance organizers to understand what you hear when you hear
+        [[selectedPlaylist.name]]?
+      </p>
+      <table>
+        <tr>
+          <td>
+            <isw-dropdown-menu id="playlistGenreSelect" multi attr-for-selected="value" label="Genre">
+              <template is="dom-repeat" items="[[genres]]" as='genre'>
+                <paper-item value="[[genre.id]]">
+                  [[genre.name]]
+                </paper-item>
+              </template>
+            </isw-dropdown-menu>
+          </td>
+          <td>
+            <isw-dropdown-menu id="playlistAttrSelect" multi attr-for-selected="value" label="Tags (select all that apply)">
+              <template is="dom-repeat" items="[[attributes]]" as='attr'>
+                <paper-item value="[[attr.id]]">
+                  [[attr.name]]
+                </paper-item>
+              </template>
+            </isw-dropdown-menu>
+          </td>
+        </tr>
+      </table>
+      <div class="buttons">
+        <paper-button dialog-dismiss autofocus>Cancel</paper-button>
+        <paper-button on-tap="_createPlaylist" dialog-confirm autofocus>Submit</paper-button>
       </div>
     </paper-dialog>
     <iron-collapse id="collapse">
@@ -197,18 +237,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       <iron-form>
         <form class$="{{formStyling}}" method="get" action="/form/handler">
-          <h1> Tracks </h1>
+          <h1> Find Tracks on Spotify </h1>
           <paper-button class="help" on-click="toggleCollapse">
             <iron-icon icon="icons:help-outline"></iron-icon>
           </paper-button>
-          <paper-search-panel on-paper-search-search="_loadData" search="{{search}}" count="{{count}}" items="[[items]]" has-more="[[hasMore]]"
-            loading="[[loading]]">
+          <paper-search-panel on-paper-search-search="_loadTrackData" search="{{search}}" count="{{count}}" items="[[tracks]]" has-more="[[hasMore]]"
+            loading="[[tracksLoading]]">
           </paper-search-panel>
         </form>
       </iron-form>
       <br>
-      <template is="dom-if" if="{{items}}">
-        <vaadin-grid items='{{items}}'>
+      <template is="dom-if" if="{{tracks}}">
+        <vaadin-grid items='{{tracks}}'>
           <vaadin-grid-column>
             <template>
               <img class="albumArt" src={{_getImage(item.album.images)}}>
@@ -239,7 +279,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <vaadin-grid-column>
             <template class="header">Add to Jukebox</template>
             <template>
-              <paper-button class="addButton" on-click="_expandItem">
+              <paper-button class="addButton" on-click="_expandSong">
                 <iron-icon icon="icons:add-circle"></iron-icon>
               </paper-button>
             </template>
@@ -248,8 +288,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </template>
     </div>
     <div class="card">
-      <form class$="{{formStyling}}" method="get" action="/form/handler">
-        <h1> Attributes </h1>
+      <iron-form>
+        <form class$="{{formStyling}}">
+          <h1> Find Playlists on Spotify </h1>
+          <paper-button class="help" on-click="toggleCollapse">
+            <iron-icon icon="icons:help-outline"></iron-icon>
+          </paper-button>
+          <paper-search-panel on-paper-search-search="_loadPlaylistData" search="{{playlistSearch}}" count="{{count}}" items="[[playlists]]"
+            has-more="[[hasMore]]" loading="[[playlistsLoading]]">
+          </paper-search-panel>
+        </form>
+      </iron-form>
+      <br>
+      <template is="dom-if" if="{{playlists}}">
+        <vaadin-grid items='{{playlists}}'>
+          <vaadin-grid-column>
+            <template>
+              <img class="albumArt" src={{_getImage(item.images)}}>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Track</template>
+            <template><strong class="wrap">[[item.name]]</strong></template>
+          </vaadin-grid-column>
+          <!-- <vaadin-grid-column>
+            <template class="header">Artist</template>
+            <template>[[_getArtistName(item.artists)]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Album</template>
+            <template>[[item.album.name]]</template>
+          </vaadin-grid-column> -->
+          <vaadin-grid-column>
+            <template class="header">Open In Spotify</template>
+            <template>
+              <a href={{item.external_urls.spotify}} target="_blank">
+                <paper-button class="spotifyButton">
+                  <img class="spotifyLogo" src="../images/spotify.png">
+                </paper-button>
+              </a>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column>
+            <template class="header">Add to Jukebox</template>
+            <template>
+              <paper-button class="addButton" on-click="_expandPlaylist">
+                <iron-icon icon="icons:add-circle"></iron-icon>
+              </paper-button>
+            </template>
+          </vaadin-grid-column>
+        </vaadin-grid>
+      </template>
+    </div>
+    <div class="card">
+      <form class$="{{formStyling}}">
+        <h1> Create Attributes </h1>
         <paper-button class="help" on-click="toggleCollapse">
           <iron-icon icon="icons:help-outline"></iron-icon>
         </paper-button>
@@ -263,7 +356,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </div>
     <div class="card">
       <form class$="{{formStyling}}" method="get" action="/form/handler">
-        <h1> Genres </h1>
+        <h1> Create Genres </h1>
+        <paper-button class="help" on-click="toggleCollapse">
+          <iron-icon icon="icons:help-outline"></iron-icon>
+        </paper-button>
+        <paper-input id="genName" label="Name"></paper-input>
+        <paper-input id="genDescription" label="Description"></paper-input>
+        <i>[[genLog]]</i>
+        <div>
+          <paper-button class="attrBttn" on-tap="_createGenre" raised>Submit</paper-button>
+        </div>
+      </form>
+    </div>
+    <div class="card">
+      <form class$="{{formStyling}}" method="get" action="/form/handler">
+        <h1> Import Playlist </h1>
         <paper-button class="help" on-click="toggleCollapse">
           <iron-icon icon="icons:help-outline"></iron-icon>
         </paper-button>
@@ -324,22 +431,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       toggleCollapse() {
         this.$.collapse.toggle();
+        this.$.document.documentElement.scrollTop = 0
       }
       _getImage(a) {
-        var image = a[0];
-        var href = image.url;
-        return href;
+        let image = a[0];
+        if (image && image.url) {
+          let href = image.url;
+          return href;
+        }
       }
-      _expandItem(e) {
+      _expandSong(e) {
         // open modal for selected song
         this.set('selectedSong', e.model.item)
-        this.$.modal.open()
+        this.$.songModal.open()
       }
-      _loadData() {
+      _expandPlaylist(e) {
+        // open modal for selected song
+        this.set('selectedPlaylist', e.model.item)
+        this.$.playlistModal.open()
+      }
+      _loadTrackData() {
         // load data from spotify search query 
-        var encodedSearchTerm = encodeURIComponent(this.search);
-        this.$.spotifySearch.url = 'https://api.spotify.com/v1/search?type=track&q=' + encodedSearchTerm
-        this.$.spotifySearch.generateRequest();
+        let encodedSearchTerm = encodeURIComponent(this.trackSearch);
+        this.set('tracksLoading', true)
+        this.$.spotifyTrackSearch.url = 'https://api.spotify.com/v1/search?type=track&q=' + encodedSearchTerm
+        this.$.spotifyTrackSearch.generateRequest();
+      }
+      _loadPlaylistData() {
+        // load data from spotify search query 
+        let encodedSearchTerm = encodeURIComponent(this.playlistSearch);
+        this.set('playlistsLoading', true)
+        this.$.spotifyPlaylistSearch.url = 'https://api.spotify.com/v1/search?type=playlist&q=' + encodedSearchTerm
+        this.$.spotifyPlaylistSearch.generateRequest();
       }
       _createAttribute() {
         let attribute = {};
@@ -360,20 +483,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _createSong(e) {
         let songObj = {}
         // Get selected attribute IDS
-        let attributes = this.$.attrSelect.selectedItems
+        let attributes = this.$.songAttrSelect.selectedItems
         songObj.attributes = attributes.map(attr => attr.value);
         // Deselect items
-        this.$.attrSelect.selectedItems = []
+        this.$.songAttrSelect.selectedItems = []
         // Get selected genre IDS
-        let genres = this.$.genreSelect.selectedItems
+        let genres = this.$.songGenreSelect.selectedItems
         songObj.genres = genres.map(genre => genre.value);
         // Deselect items
-        this.$.genreSelect.selectedItems = [];
+        this.$.songGenreSelect.selectedItems = [];
         // Get song spotify id
         songObj.spotify_id = this.selectedSong.id;
         this.$.createSong.body = songObj;
         this.$.createSong.method = 'POST';
         this.$.createSong.generateRequest();
+      }
+      _createPlaylist(e) {
+        let playlistObj = {};
+        let playlistURL = this.selectedPlaylist.tracks.href;
+        if(playlistURL){
+          let idLimitedURL = playlistURL + '?fields=items(track(id))';
+          this.$.getTracksFromPlaylist.url = idLimitedURL;
+          this.$.getTracksFromPlaylist.method = "GET"
+          this.$.getTracksFromPlaylist.generateRequest();
+        }
+        // Get selected attribute IDS
+        let attributes = this.$.playlistAttrSelect.selectedItems
+        playlistObj.attributes = attributes.map(attr => attr.value);
+        // Deselect items
+        this.$.playlistAttrSelect.selectedItems = []
+        // Get selected genre IDS
+        let genres = this.$.playlistGenreSelect.selectedItems
+        playlistObj.genres = genres.map(genre => genre.value);
+        // Deselect items
+        // this.$.playlistGenreSelect.selectedItems = [];
+        // Get song spotify id
+        // songObj.spotify_id = this.selectedSong.id;
+        // this.$.createSong.body = songObj;
+        // this.$.createSong.method = 'POST';
+        // this.$.createSong.generateRequest();
+      }
+      tracksCallback(e){
+        let response = e.detail.response;
+        console.log(response);
       }
       handleGetAttributes(e) {
         this.set('attributes', e.detail.response);
@@ -404,9 +556,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       handleCreateSongResponse(e) {
         this.$.confirmationModal.open()
       }
-      handleSearchResponse(e) {
+      handleSearchTracksResponse(e) {
         var response = e.detail.response;
-        this.set('items', response.tracks.items)
+        this.set('tracks', response.tracks.items)
+        this.set('tracksLoading', false)
+      }
+      handleSearchPlaylistsResponse(e) {
+        var response = e.detail.response;
+        console.log(response);
+        this.set('playlists', response.playlists.items)
+        this.set('playlistsLoading', false)
       }
       handleUserResponse(e) {
         var response = e.detail.response;
