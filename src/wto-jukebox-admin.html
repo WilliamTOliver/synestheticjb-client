@@ -124,11 +124,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <!--AJAX-->
-    <!--Create-->
+    <!--Create in MongoDB-->
     <iron-ajax id="createAttribute" url="[[server]]/jukeBox/createAttribute" handle-as="json" content-type="application/json"
       on-response="handleCreateAttributeResponse"></iron-ajax>
     <iron-ajax id="createGenre" url="[[server]]/jukeBox/createGenre" handle-as="json" content-type="application/json" on-response="handleCreateGenreResponse"></iron-ajax>
     <iron-ajax id="createSong" url="[[server]]/jukeBox/createSong" handle-as="json" content-type="application/json" on-response="handleCreateSongResponse"></iron-ajax>
+    <iron-ajax id="addMulti" url="[[server]]/jukeBox/addMulti" handle-as="json" content-type="application/json" on-response="handleCreateSongResponse"></iron-ajax>
     <!--Find from Spotify (all spotify requests require [[token]] from oAuth) -->
     <iron-ajax id="getUser" handle-as="json" url="https://api.spotify.com/v1/me" headers="[[token]]" on-response="handleUserResponse"
       auto></iron-ajax>
@@ -146,7 +147,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-dialog class="sendToTheFore" id="confirmationModal">
       <br>
       <strong> Thank you! </strong>
-      <p> Your track has been added to the Jukebox! </p>
+      <p> Your addition to the Jukebox has been logged! </p>
       <paper-button dialog-confirm autofocus>Continue</paper-button>
     </paper-dialog>
 
@@ -516,10 +517,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.playlistAttrSelect.selectedItems = null;
       }
       tracksCallback(e) {
-        let response = e.detail.response;
+        let response = e.detail.response.items;
         console.log(response);
         if (response && this.playlistAttributes && this.playlistGenres) {
-
+          let trackIDs = response.map(obj => obj.track.id);
+          this.$.addMulti.body = {
+            genres: this.playlistGenres,
+            attributes: this.playlistAttributes,
+            tracks: trackIDs
+          };
+          this.$.addMulti.method = "POST";
+          this.$.addMulti.generateRequest();
         }
       }
       handleGetAttributes(e) {
