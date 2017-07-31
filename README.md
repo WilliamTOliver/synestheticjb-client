@@ -11,12 +11,9 @@ Second, install [Bower](https://bower.io/) using [npm](https://www.npmjs.com)
 
     npm install -g bower
 
-Third, do a find-replace-all in your text or code editor for:
+Third, in my-app there is a server address, replace it with your address:
 
-    https://frozen-basin-45731.herokuapp.com/ 
-    -with your server's path.
-    -if you are pairing this client with it's concurrently built API, replace this with:
-    http://localhost:1337/
+    http://localhost:1337/ is the location of the api paired with this project, to dev locally keep this, and uncomment it if it is commented. 
 
     
 ### Start the development server
