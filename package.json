@@ -1,5 +1,5 @@
 {
-  "name": "polymer-starter-kit",
+  "name": "synestheticjs-client",
   "license": "BSD-3-Clause",
   "devDependencies": {
     "eslint": "^3.19.0",
@@ -11,5 +11,21 @@
     "lint:javascript": "eslint . --ext js,html --ignore-path .gitignore",
     "test": "polymer test",
     "test:integration": "polymer build # test that psk builds without error with the CLI"
-  }
+  },
+  "description": "##### Prerequisites to Dev on a Forked Version of this Project",
+  "version": "1.0.0",
+  "main": "service-worker.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WilliamTOliver/synestheticjb-client.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/WilliamTOliver/synestheticjb-client/issues"
+  },
+  "homepage": "https://github.com/WilliamTOliver/synestheticjb-client#readme"
 }
